@@ -361,7 +361,7 @@
         <button class="big-btn btn-zapiski" onclick="goTo('screen-choose-type')">
             <span class="icon">📜</span>
             <span class="title">Подать записку</span>
-            <span class="subtitle">За здравие или за упокой</span>
+            <span class="subtitle">За здравие · за упокой · за болящих · за путешествующих</span>
         </button>
 
         <button class="btn-donate-sber" onclick="goTo('screen-donate')">
@@ -1476,6 +1476,70 @@
         // ХРИСТОФОР уже есть
         // ЮВЕНАЛИЙ уже есть
         // ЯРОСЛАВ уже есть
+        // ГЛАФИРА
+        'глафира':'Глафира','глафиры':'Глафира',
+        // ИННА (мученик Инна, в России используется и как женское)
+        'инна':'Инна','инны':'Инна',
+        // РИММА (мученик Римма, в России используется и как женское)
+        'римма':'Римма','риммы':'Римма',
+        // ЗЛАТА (мученица Злата Могленская)
+        'злата':'Злата','златы':'Злата',
+        // АЛЬБИНА (мученица Альбина)
+        'альбина':'Альбина','альбины':'Альбина',
+        // АЛЁНА — народная форма Елены
+        'алёна':'Елена','алёны':'Елена',
+        // АРИНА — народная форма Ирины
+        'арина':'Ирина','арины':'Ирина',
+        // КАТЕРИНА — народная форма Екатерины
+        'катерина':'Екатерина','катерины':'Екатерина',
+        // ОКСАНА — народная форма Ксении
+        'оксана':'Ксения','оксаны':'Ксения',
+        // КЛИМ — краткая форма Климента
+        'клим':'Климент','клима':'Климент',
+        // ВИКЕНТИЙ (мученик Викентий Сарагосский)
+        'викентий':'Викентий','викентия':'Викентий',
+        // МАРЬЯНА — народная форма Марии
+        'марьяна':'Мария','марьяны':'Мария','мариана':'Мария',
+        // ДИАНА — нет православного аналога (обрабатывается как неизвестное)
+        // ЖАННА → Иоанна (через AMBIGUOUS_MAP)
+        'жанна':'Иоанна','жанны':'Иоанна',
+        // РЕГИНА — нет аналога
+        // ЗЛАТА уже добавлена
+        // МИРОСЛАВА — нет канонической формы
+        // АВКСЕНТИЙ
+        'авксентий':'Авксентий','авксентия':'Авксентий',
+        // АГАПИТ
+        'агапит':'Агапит','агапита':'Агапит',
+        // АПОЛЛИНАРИЙ (мужское)
+        'аполлинарий':'Аполлинарий','аполлинария':'Аполлинарий',
+        // ВОНИФАТИЙ уже есть
+        // ГАЛАКТИОН
+        'галактион':'Галактион','галактиона':'Галактион',
+        // ЕРМИЛ
+        'ермил':'Ермил','ермила':'Ермил',
+        // ИГНАТИЙ
+        'игнатий':'Игнатий','игнатия':'Игнатий','игнат':'Игнатий','игната':'Игнатий',
+        // ИПАТИЙ уже есть
+        // ИСИХИЙ
+        'исихий':'Исихий',
+        // КУКША
+        'кукша':'Кукша',
+        // ЛЕВКИЙ
+        'левкий':'Левкий',
+        // ЛУКИАН уже есть
+        // НЕКТАРИЙ уже есть
+        // ПЕРЕГРИН
+        'перегрин':'Перегрин',
+        // ПОПЛИЙ
+        'поплий':'Поплий',
+        // САМПСОН
+        'сампсон':'Сампсон','сампсона':'Сампсон',
+        // СОСИПАТР уже есть
+        // ФЕОГНОСТ
+        'феогност':'Феогност',
+        // ФОТИНА (женское, отдельно от Фотиния)
+        // Фотиния уже есть и охватывает Светлану
+        // ХАРИТИНА уже есть
     };
 
     function findCanonical(word) {
@@ -1563,7 +1627,7 @@
             </span>`;
         // Проверяем — все ли неоднозначные имена разрешены
         const allOk = [...document.querySelectorAll('#namesResult .name-row')]
-            .every(r => r.className.includes('ok') || r.dataset.deleted === '1');
+            .every(r => r.className.includes('ok'));
         document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
     }
 
@@ -1624,7 +1688,7 @@
     // ─── Обработка имён ────────────────────────────────────────────────────
     function processNames() {
         const input = document.getElementById('namesInput').value;
-        const names = input.split('\n').map(n => n.trim()).filter(n => n);
+        const names = input.split('\n').map(n => n.trim().replace(/[.,;:!?—–]+$/, '').trim()).filter(n => n);
         if (!names.length) { alert('Пожалуйста, введите хотя бы одно имя'); return; }
 
         const result = document.getElementById('namesResult');
@@ -1693,7 +1757,10 @@
                         <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
                             <input type="text" class="fix-input" placeholder="Введите православное имя"
                                 style="flex:1;min-width:120px;padding:12px;font-size:18px;border:2px solid #C8A04A;border-radius:10px;font-family:Georgia,serif;outline:none"
-                                oninput="checkFixInput(this)">
+                                oninput="checkFixInput(this)"
+                                onblur="applyFix(this)"
+                                onkeydown="if(event.key==='Enter'){this.blur()}"
+                            >
                         </div>
                         <div style="display:flex;gap:8px;margin-top:8px">
                             <button onclick="skipName(this)"
@@ -1725,22 +1792,55 @@
         if (!val) {
             row.dataset.canonical = '';
             input.style.borderColor = '#C8A04A';
-            hint.style.display = 'none';
+            if (hint) hint.style.display = 'none';
             return;
         }
-        const canonical = findCanonical(val) || (val.charAt(0).toUpperCase() + val.slice(1).toLowerCase());
+        const found = findCanonical(val);
+        const canonical = found || (val.charAt(0).toUpperCase() + val.slice(1).toLowerCase());
         row.dataset.canonical = canonical;
         input.style.borderColor = '#4A8B4A';
-        hint.textContent = '✓ В записке: ' + toGenitive(canonical);
-        hint.style.display = 'block';
+        if (hint) {
+            hint.textContent = '✓ В записке: ' + toGenitive(canonical);
+            hint.style.display = 'block';
+        }
+    }
+
+    function applyFix(input) {
+        setTimeout(() => {
+            const row = input.closest('.name-row');
+            if (!row || !row.parentNode) return;
+            if (!row.className.includes('warn')) return;
+            const val = input.value.trim();
+            if (!val) return;
+            const found = findCanonical(val);
+            const canonical = found || (val.charAt(0).toUpperCase() + val.slice(1).toLowerCase());
+            row.dataset.canonical = canonical;
+            const rawName = row.dataset.original || val;
+            const gen = toGenitive(canonical);
+            row.className = 'name-row ok';
+            row.innerHTML = found
+                ? `<span class="status" style="font-size:22px">✓</span>
+                   <span class="name-text">
+                       <span class="name-main"><span style="color:#999;text-decoration:line-through">${rawName}</span> → <b style="color:#1A5C1A;font-size:22px">${gen}</b></span>
+                       <span class="name-note" style="color:#666;font-size:15px">Церковное имя: ${canonical}</span>
+                   </span>`
+                : `<span class="status" style="font-size:22px">✓</span>
+                   <span class="name-text">
+                       <span class="name-main"><span style="color:#999;text-decoration:line-through">${rawName}</span> → <b style="color:#8B5A00;font-size:22px">${canonical}</b></span>
+                       <span class="name-note" style="color:#8B5A00;font-size:15px">Введено вручную</span>
+                   </span>`;
+            const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+                .every(r => r.className.includes('ok'));
+            document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
+        }, 120);
     }
 
     function deleteName(btn) {
         const row = btn.closest('.name-row');
-        row.dataset.canonical = '';
-        row.dataset.deleted = '1';
-        row.style.opacity = '0.35';
-        row.style.pointerEvents = 'none';
+        row.remove();
+        const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+            .every(r => r.className.includes('ok'));
+        document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
     }
 
     function confirmNames() {
@@ -1749,7 +1849,6 @@
         let hasUnsolved = false;
 
         rows.forEach(row => {
-            if (row.dataset.deleted === '1') return;
             const canonical = row.dataset.canonical;
             const prefix = row.dataset.prefix || '';
             const suffix = row.dataset.suffix || '';
