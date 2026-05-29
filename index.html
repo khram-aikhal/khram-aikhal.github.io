@@ -542,9 +542,6 @@
             <div class="preview-type" id="previewType"></div>
             <div class="names-list" id="previewNames"></div>
         </div>
-        <div class="price-block">
-            <div class="price-label">Пожертвование — по желанию</div>
-        </div>
         <button class="btn-primary" onclick="submitNoteOnly()">Отправить записку →</button>
         <button class="btn-primary" onclick="submitNote()" style="background:linear-gradient(135deg,#21A038,#007A2F);margin-top:10px">💳 Отправить + Пожертвование</button>
         <button class="btn-secondary" onclick="goTo('screen-check-names')">← Назад</button>
@@ -563,12 +560,33 @@
             <div class="preview-type" id="successType"></div>
             <div class="names-list" id="successNames"></div>
         </div>
-        <button class="btn-donate-sber" onclick="window.open('https://messenger.online.sberbank.ru/sl/G11bjkOBTlCp7iypZ','_blank')" style="margin-top:16px;">
-            <span class="icon">💳</span>
-            <span class="title">Пожертвование на храм</span>
-            <span class="subtitle">Перевод через СберБанк Онлайн</span>
+
+        <div style="margin-top:20px;font-size:14px;color:#8B5A2A;text-align:center;margin-bottom:12px">
+            🙏 Пожертвование на храм — по желанию
+        </div>
+
+        <!-- 1. СберБанк -->
+        <button class="btn-donate-sber" onclick="window.open('https://www.sberbank.ru/ru/choise_bank?requisiteNumber=79244605220&bankCode=100000000111','_blank')" style="margin-bottom:10px">
+            <span class="icon">💚</span>
+            <span class="title">СберБанк Онлайн</span>
+            <span class="subtitle">Карта батюшки · Иоанн Александрович С.</span>
         </button>
-        <button class="btn-primary" onclick="goTo('screen-home')" style="margin-top:12px;">На главную</button>
+
+        <!-- 2. СБП терминал -->
+        <button class="btn-donate-sber" onclick="window.open('https://qr.nspk.ru/AS2A007V3U658PIG9SSBKB25NI6CADPI?type=01&bank=100000000111&crc=b639','_blank')" style="margin-bottom:10px;background:linear-gradient(135deg,#1565C0,#0D47A1)">
+            <span class="icon">⚡</span>
+            <span class="title">СБП — терминал храма</span>
+            <span class="subtitle">Любой банк · Официальный счёт</span>
+        </button>
+
+        <!-- 3. Телефон -->
+        <div style="text-align:center;padding:14px;background:#F7EED8;border-radius:12px;border:1px solid #C8A04A;margin-bottom:14px">
+            <div style="font-size:13px;color:#8B5A2A;margin-bottom:4px">📞 Перевод по номеру телефона</div>
+            <div style="font-size:22px;font-weight:bold;color:#5C0A0A;letter-spacing:1px">+7 (924) 460-52-20</div>
+            <div style="font-size:12px;color:#8B5A2A;margin-top:4px">Иоанн Александрович С. · любой банк</div>
+        </div>
+
+        <button class="btn-primary" onclick="goTo('screen-home')" style="margin-top:4px;">На главную</button>
     </div>
 
 
@@ -1370,8 +1388,7 @@
 
     function submitNote() {
         submitToBot(currentType, finalNames);
-        window.open('https://messenger.online.sberbank.ru/sl/G11bjkOBTlCp7iypZ', '_blank');
-        goTo('screen-success');
+        goTo('screen-donate');
     }
 
     function submitToBot(type, names) {
