@@ -1661,6 +1661,8 @@
         'схиигумения','игумения','схимонахиня','схимница','монахиня','инокиня','рясофорная','послушница',
         // Сокращения
         'мон',
+        // Светские (для поминания)
+        'президент','губернатор',
     ];
 
     // ─── Суффиксы «со чадами» ───────────────────────────────────────────────
@@ -1673,8 +1675,21 @@
         // Сортируем по длине — длинные совпадения приоритетнее (схиархимандрит > архимандрит)
         const sorted = [...TITLES].sort((a, b) => b.length - a.length);
         for (const t of sorted) {
-            // Совпадение: точное или первое слово начинается с основы (падежные формы)
+            let matched = false;
             if (firstWord === t || firstWord.startsWith(t)) {
+                // Точное совпадение или добавление окончания (митрополит→митрополита)
+                matched = true;
+            } else if (t.endsWith('й') && firstWord.startsWith(t.slice(0, -1))) {
+                // й→я: иерей→иерея, протоиерей→протоиерея
+                matched = true;
+            } else if (t.endsWith('ь') && firstWord.startsWith(t.slice(0, -1))) {
+                // ь→я: пономарь→пономаря, звонарь→звонаря
+                matched = true;
+            } else if (/[иы]й$/.test(t) && firstWord.startsWith(t.slice(0, -2))) {
+                // прилагательные: рясофорный→рясофорного, певчий→певчего
+                matched = true;
+            }
+            if (matched) {
                 const origWords = rawName.trim().split(/\s+/);
                 return { title: origWords[0], rest: origWords.slice(1).join(' ') };
             }
