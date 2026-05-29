@@ -543,10 +543,10 @@
             <div class="names-list" id="previewNames"></div>
         </div>
         <div class="price-block">
-            <div class="price-label">Пожертвование за записку</div>
-            <div class="price-note">⚠ Демо-режим — оплата не взимается</div>
+            <div class="price-label">Пожертвование — по желанию</div>
         </div>
-        <button class="btn-primary" onclick="submitNote()" style="background:linear-gradient(135deg,#21A038,#007A2F)">💳 Пожертвование</button>
+        <button class="btn-primary" onclick="submitNoteOnly()">Отправить записку →</button>
+        <button class="btn-primary" onclick="submitNote()" style="background:linear-gradient(135deg,#21A038,#007A2F);margin-top:10px">💳 Отправить + Пожертвование</button>
         <button class="btn-secondary" onclick="goTo('screen-check-names')">← Назад</button>
     </div>
 
@@ -1361,6 +1361,11 @@
         document.getElementById('successType').textContent = typeLabel;
         document.getElementById('successNames').textContent = namesStr;
         goTo('screen-confirm');
+    }
+
+    function submitNoteOnly() {
+        submitToBot(currentType, finalNames);
+        goTo('screen-success');
     }
 
     function submitNote() {
