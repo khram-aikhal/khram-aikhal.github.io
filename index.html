@@ -264,6 +264,45 @@
             background: #FFF3CD; border: 1px solid #C8A04A; border-radius: 10px;
             padding: 12px 16px; margin-bottom: 16px; font-size: 15px; color: #8B5A00; line-height: 1.5;
         }
+
+        /* ── Открытки ── */
+        #cards-section { margin-top: 20px; }
+        .cards-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+        .cards-feast { font-size:19px; color:#5C0A0A; font-weight:bold; line-height:1.4; }
+        .cards-date { font-size:13px; color:#8B6A3A; margin-top:3px; }
+        .cards-count { font-size:13px; color:#7A85BB; }
+        .cards-scroll {
+            display:flex; gap:12px; overflow-x:auto; padding-bottom:10px;
+            -webkit-overflow-scrolling:touch; scrollbar-width:none;
+        }
+        .cards-scroll::-webkit-scrollbar { display:none; }
+        .card-thumb {
+            flex-shrink:0; width:150px; height:150px; border-radius:12px;
+            overflow:hidden; border:2px solid #C8A04A; cursor:pointer;
+            box-shadow:0 2px 8px rgba(44,18,8,0.18); background:#EEE;
+        }
+        .card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+        .cards-empty {
+            text-align:center; padding:24px 16px; background:#FDF6E3;
+            border-radius:12px; border:1px dashed #C8A04A;
+        }
+        /* ── Лайтбокс ── */
+        #lightbox {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.93); z-index:9999;
+            flex-direction:column;
+        }
+        .lb-top { display:flex; justify-content:flex-end; padding:14px 16px; }
+        .lb-close { background:none; border:none; color:#fff; font-size:34px; cursor:pointer; line-height:1; }
+        .lb-img-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:0 12px; }
+        .lb-img-wrap img { max-width:100%; max-height:68vh; border-radius:12px; object-fit:contain; }
+        .lb-actions { display:flex; gap:12px; padding:16px; }
+        .lb-btn {
+            flex:1; padding:18px 10px; border:none; border-radius:14px;
+            font-family:Georgia,serif; font-size:18px; font-weight:bold; cursor:pointer;
+        }
+        .lb-save { background:#C8A04A; color:#2C1208; }
+        .lb-share { background:#2C1208; color:#C8A04A; border:1px solid #C8A04A; }
     </style>
 </head>
 <body>
@@ -330,6 +369,26 @@
                 scrolling="yes">
             </iframe>
         </div>
+
+        <!-- Праздничные открытки -->
+        <div id="cards-section" style="display:none">
+            <div class="divider">✦ ✦ ✦</div>
+            <div class="cards-header">
+                <div>
+                    <div class="cards-feast" id="cards-feast-name"></div>
+                    <div class="cards-date" id="cards-feast-date"></div>
+                </div>
+                <div class="cards-count" id="cards-count-label"></div>
+            </div>
+            <div class="cards-scroll" id="cards-scroll"></div>
+            <div class="cards-empty" id="cards-empty" style="display:none">
+                <div style="font-size:38px;margin-bottom:10px">🎨</div>
+                <div style="font-size:15px;color:#8B6A3A;line-height:1.6">
+                    Открытки к этому празднику<br>скоро появятся
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Экран пожертвования -->
@@ -523,6 +582,21 @@
             Храм благодарит вас<br>за помощь и заботу!
         </div>
         <button class="btn-primary" onclick="goTo('screen-home')">На главную</button>
+    </div>
+
+
+    <!-- Лайтбокс -->
+    <div id="lightbox">
+        <div class="lb-top">
+            <button class="lb-close" onclick="closeLightbox()">✕</button>
+        </div>
+        <div class="lb-img-wrap">
+            <img id="lb-img" src="" alt="">
+        </div>
+        <div class="lb-actions">
+            <button class="lb-btn lb-save" onclick="downloadCard()">⬇ Сохранить</button>
+            <button class="lb-btn lb-share" onclick="shareCard()">📤 Поделиться</button>
+        </div>
     </div>
 
 </div>
@@ -1330,6 +1404,141 @@
             } else { alert('Ошибка очистки.'); }
         } catch(e) { alert('Ошибка соединения.'); }
     }
+    // ─── Православный календарь + открытки ────────────────────────────────
+
+    function orthodoxEaster(year) {
+        // Алгоритм Мееуса для юлианской Пасхи → конвертация в григорианскую
+        const a = year % 4, b = year % 7, c = year % 19;
+        const d = (19 * c + 15) % 30;
+        const e = (2 * a + 4 * b - d + 34) % 7;
+        const mo = Math.floor((d + e + 114) / 31) - 1; // 0-based month
+        const dy = ((d + e + 114) % 31) + 1;
+        // Разница юлианского и григорианского в XX-XXI вв. = 13 дней
+        return new Date(year, mo, dy + 13);
+    }
+
+    function getFeastList(year) {
+        const e = orthodoxEaster(year);
+        const add = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        const D = (m, d) => new Date(year, m - 1, d);
+        return [
+            { key:'rozhdestvo',     name:'Рождество Христово',             emoji:'⭐', date: D(1,7)  },
+            { key:'kreshenie',      name:'Крещение Господне',              emoji:'💧', date: D(1,19) },
+            { key:'sretenie',       name:'Сретение Господне',              emoji:'🕯', date: D(2,15) },
+            { key:'blagoveshenie',  name:'Благовещение',                   emoji:'🕊', date: D(4,7)  },
+            { key:'palms',          name:'Вход Господень в Иерусалим',     emoji:'🌿', date: add(e,-7) },
+            { key:'pasha',          name:'Светлое Христово Воскресение',   emoji:'🌅', date: e },
+            { key:'radonitsa',      name:'Радоница',                       emoji:'🕯', date: add(e,9) },
+            { key:'voznesenie',     name:'Вознесение Господне',            emoji:'✦', date: add(e,39) },
+            { key:'troitsa-rod',    name:'Троицкая родительская суббота',  emoji:'🌿', date: add(e,48) },
+            { key:'troitsa',        name:'Святая Троица',                  emoji:'🌿', date: add(e,49) },
+            { key:'preobrazhenie',  name:'Преображение Господне',          emoji:'✨', date: D(8,19) },
+            { key:'uspenie',        name:'Успение Богородицы',             emoji:'🌸', date: D(8,28) },
+            { key:'rozhd-bog',      name:'Рождество Богородицы',           emoji:'🌸', date: D(9,21) },
+            { key:'vozdvizhenie',   name:'Воздвижение Честного Креста',    emoji:'✞', date: D(9,27) },
+            { key:'vvedenie',       name:'Введение во храм Богородицы',    emoji:'🕯', date: D(12,4) },
+        ];
+    }
+
+    function getNextFeast() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const yr = today.getFullYear();
+        const all = [...getFeastList(yr), ...getFeastList(yr + 1)];
+        return all.filter(f => f.date >= today).sort((a,b) => a.date - b.date)[0] || null;
+    }
+
+    let currentCardUrl = '';
+
+    async function loadCards() {
+        const feast = getNextFeast();
+        if (!feast) return;
+
+        const nameEl = document.getElementById('cards-feast-name');
+        const dateEl = document.getElementById('cards-feast-date');
+        nameEl.textContent = feast.emoji + ' ' + feast.name;
+
+        const opts = { day:'numeric', month:'long' };
+        const days = Math.round((feast.date - new Date().setHours(0,0,0,0)) / 86400000);
+        let dateStr = feast.date.toLocaleDateString('ru-RU', opts);
+        if (days === 0) dateStr += ' — сегодня!';
+        else if (days === 1) dateStr += ' — завтра';
+        else if (days <= 7) dateStr += ' — через ' + days + ' дн.';
+        dateEl.textContent = dateStr;
+
+        document.getElementById('cards-section').style.display = 'block';
+
+        try {
+            const resp = await fetch('https://khram-aikhal.github.io/cards/index.json?v=' + Date.now());
+            if (!resp.ok) throw new Error();
+            const data = await resp.json();
+            renderCards(data[feast.key] || [], feast.key);
+        } catch {
+            document.getElementById('cards-empty').style.display = 'block';
+        }
+    }
+
+    function renderCards(cards, feastKey) {
+        const scroll = document.getElementById('cards-scroll');
+        scroll.innerHTML = '';
+        if (!cards.length) {
+            document.getElementById('cards-empty').style.display = 'block';
+            return;
+        }
+        document.getElementById('cards-count-label').textContent = cards.length + (cards.length === 1 ? ' открытка' : cards.length < 5 ? ' открытки' : ' открыток');
+        cards.forEach(fn => {
+            const url = 'https://khram-aikhal.github.io/cards/' + feastKey + '/' + fn;
+            const div = document.createElement('div');
+            div.className = 'card-thumb';
+            div.innerHTML = '<img src="' + url + '" loading="lazy">';
+            div.onclick = () => openLightbox(url);
+            scroll.appendChild(div);
+        });
+    }
+
+    function openLightbox(url) {
+        currentCardUrl = url;
+        document.getElementById('lb-img').src = url;
+        document.getElementById('lightbox').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+        document.getElementById('lb-img').src = '';
+        document.body.style.overflow = '';
+    }
+
+    async function downloadCard() {
+        try {
+            const r = await fetch(currentCardUrl);
+            const blob = await r.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = currentCardUrl.split('/').pop() || 'card.jpg';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        } catch { window.open(currentCardUrl, '_blank'); }
+    }
+
+    async function shareCard() {
+        if (navigator.share) {
+            try {
+                const r = await fetch(currentCardUrl);
+                const blob = await r.blob();
+                const file = new File([blob], 'card.jpg', { type: blob.type });
+                await navigator.share({ files: [file], title: 'Поздравление с праздником' });
+                return;
+            } catch {}
+        }
+        if (navigator.clipboard) {
+            await navigator.clipboard.writeText(currentCardUrl);
+            alert('Ссылка скопирована — можете отправить в мессенджере');
+        } else {
+            window.open(currentCardUrl, '_blank');
+        }
+    }
+
+    loadCards();
+
 </script>
 </body>
 </html>
