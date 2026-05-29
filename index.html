@@ -584,6 +584,7 @@
             <div style="font-size:13px;color:#8B5A2A;margin-bottom:4px">📞 Перевод по номеру телефона</div>
             <div style="font-size:22px;font-weight:bold;color:#5C0A0A;letter-spacing:1px">+7 (924) 460-52-20</div>
             <div style="font-size:12px;color:#8B5A2A;margin-top:4px">Иоанн Александрович С. · любой банк</div>
+            <button onclick="copyDonatePhone()" style="margin-top:10px;padding:10px 0;background:#5C0A0A;color:#F5E6C8;border:none;border-radius:10px;font-family:Georgia,serif;font-size:14px;cursor:pointer;width:100%">📋 Скопировать номер</button>
         </div>
 
         <button class="btn-primary" onclick="goTo('screen-home')" style="margin-top:4px;">На главную</button>
@@ -643,12 +644,13 @@
 
     function copyDonatePhone() {
         const phone = '+79244605220';
-        if (navigator.clipboard) {
+        const btn = event.currentTarget || event.target;
+        const origText = btn.textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(phone).then(() => {
-                const btn = event.target;
                 btn.textContent = '✅ Скопировано!';
-                setTimeout(() => btn.textContent = '📋 Скопировать номер', 2000);
-            });
+                setTimeout(() => btn.textContent = origText, 2000);
+            }).catch(() => prompt('Скопируйте номер:', phone));
         } else {
             prompt('Скопируйте номер:', phone);
         }
@@ -1643,6 +1645,10 @@
         'протодиакон','архидиакон','диакон','дьякон','иподиакон',
         'монах','монахиня','инок','инокиня','схимонах','схимница',
         'чтец','псаломщик','пономарь',
+        'протопресвитер','иеродиакон',
+        'игумения','схиигумения',
+        'послушник','послушница',
+        'ставрофорный','рясофорный',
     ];
 
     // ─── Суффиксы «со чадами» ───────────────────────────────────────────────
@@ -1676,12 +1682,18 @@
         row.className = 'name-row ok';
         row.innerHTML = `
             <span class="status" style="font-size:22px">!</span>
-            <span class="name-text">
+            <span class="name-text" style="flex:1">
                 <b style="color:#8B5A00;font-size:20px">${original}</b>
                 <span class="name-note" style="color:#8B5A00">Включено как есть (имя не в святцах)</span>
+                <div style="margin-top:8px">
+                    <button onclick="deleteName(this)"
+                        style="padding:8px 18px;background:#fff0f0;border:2px solid #cc4444;border-radius:10px;font-size:14px;cursor:pointer;color:#cc4444;font-family:Georgia,serif">
+                        🗑 Удалить
+                    </button>
+                </div>
             </span>`;
         const allOk = [...document.querySelectorAll('#namesResult .name-row')]
-            .every(r => r.className.includes('ok') || r.dataset.deleted === '1');
+            .every(r => r.className.includes('ok'));
         document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
     }
 
@@ -1745,6 +1757,16 @@
                             : `<b style="color:#1A5C1A;font-size:22px">${gen}</b>`}
                         <span class="name-note" style="color:#666;font-size:15px">Церковное имя: ${prefix}${canonical}</span>
                     </span>`;
+            } else if (title) {
+                // Чин распознан — принимаем запись без предупреждения
+                row.className = 'name-row ok';
+                row.dataset.canonical = '__SKIP__';
+                row.innerHTML = `
+                    <span class="status" style="font-size:24px;color:#1A5C1A">✓</span>
+                    <span class="name-text">
+                        <b style="color:#1A5C1A;font-size:22px">${rawName}</b>
+                        <span class="name-note" style="color:#666;font-size:15px">Принято · чин: ${title}</span>
+                    </span>`;
             } else {
                 hasUnknown = true;
                 row.className = 'name-row warn';
@@ -1765,7 +1787,7 @@
                         <div style="display:flex;gap:8px;margin-top:8px">
                             <button onclick="skipName(this)"
                                 style="flex:1;padding:12px 8px;background:#FFF8DC;border:2px solid #C8A04A;border-radius:10px;font-size:15px;cursor:pointer;color:#8B5A00;font-family:Georgia,serif;font-weight:bold">
-                                ! Пропустить
+                                ! Пропустить имя как есть
                             </button>
                             <button onclick="deleteName(this)"
                                 style="flex:1;padding:12px 8px;background:#fff0f0;border:2px solid #cc4444;border-radius:10px;font-size:15px;cursor:pointer;color:#cc4444;font-family:Georgia,serif">
