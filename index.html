@@ -128,6 +128,15 @@
         }
         .type-btn .type-icon { font-size: 40px; display: block; margin-bottom: 8px; }
         .type-btn .type-desc { font-size: 14px; font-weight: normal; margin-top: 6px; display: block; }
+
+        .type-btn-panikhida { background: #EAE0F5; color: #3A0A5C; border-color: #7A4A9B; }
+        .type-btn-panikhida:hover { background: #7A4A9B; color: #fff; }
+        .type-btn-molebn { background: #E8F4FF; color: #0A2A5C; border-color: #4A7ABB; }
+        .type-btn-molebn:hover { background: #4A7ABB; color: #fff; }
+        .type-section-label {
+            font-size: 13px; color: #8B6A3A; text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 20px 0 12px; text-align: center;
+        }
         .type-btn-zdravie { background: #E8F5E8; color: #1A5C1A; border-color: #4A8B4A; }
         .type-btn-zdravie:hover { background: #4A8B4A; color: #fff; }
         .type-btn-upokoj { background: #EAEBF5; color: #1A1A5C; border-color: #4A4A8B; }
@@ -386,43 +395,40 @@
         <div class="section-title">💳 Пожертвование на храм</div>
         <div class="divider">✦ ✦ ✦</div>
 
-        <!-- Вариант 1: СберБанк Онлайн -->
+        <!-- 1. СберБанк Онлайн -->
         <div class="donate-method">
             <div class="donate-method-title">💚 СберБанк Онлайн</div>
+            <div class="donate-details">Быстрый перевод через приложение Сбера</div>
             <button class="btn-donate-sber" style="margin-bottom:0"
                 onclick="window.open('https://messenger.online.sberbank.ru/sl/G11bjkOBTlCp7iypZ','_blank')">
-                <span class="icon" style="font-size:28px;margin-bottom:6px">💳</span>
-                <span class="title" style="font-size:19px">Перейти в СберБанк Онлайн</span>
-                <span class="subtitle">Быстрый перевод через приложение Сбера</span>
+                <span class="icon" style="font-size:26px;margin-bottom:6px">💳</span>
+                <span class="title" style="font-size:18px">Открыть СберБанк Онлайн</span>
+                <span class="subtitle">Перевод в приложении Сбера</span>
             </button>
         </div>
 
-        <!-- Вариант 2: Любой банк по номеру телефона -->
+        <!-- 2. СБП терминал храма -->
         <div class="donate-method">
-            <div class="donate-method-title">📞 Любой банк — по номеру телефона</div>
-            <div class="donate-phone">+7 (924) 460-52-20</div>
-            <div class="donate-details">
-                Получатель: <strong>Иван Александрович С.</strong><br>
-                Назначение: <strong>Пожертвование на храм</strong><br>
-                <span style="color:#8B5A2A">Работает через Тинькофф, ВТБ, Альфа, Газпром и любой другой банк</span>
-            </div>
-            <button class="btn-copy" onclick="copyDonatePhone()">📋 Скопировать номер</button>
+            <div class="donate-method-title">⚡ СБП — терминал храма</div>
+            <div class="donate-details">Официальный счёт храма · Любой банк · Мгновенно</div>
+            <button class="btn-donate-sber" style="margin-bottom:0;background:linear-gradient(135deg,#1565C0,#0D47A1)"
+                onclick="window.open('https://qr.nspk.ru/AS2A007V3U658PIG9SSBKB25NI6CADPI?type=01&bank=100000000111&crc=b639','_blank')">
+                <span class="icon" style="font-size:26px;margin-bottom:6px">⚡</span>
+                <span class="title" style="font-size:18px">Пожертвовать через СБП</span>
+                <span class="subtitle">Тинькофф, ВТБ, Альфа и любой другой банк</span>
+            </button>
         </div>
 
-        <!-- Вариант 3: СБП -->
-        <div class="donate-method" id="donate-sbp-block">
-            <div class="donate-method-title">⚡ СБП — Система быстрых платежей</div>
-            <div class="donate-sbp-soon" id="sbp-soon">
-                🕐 QR-код СБП появится здесь в ближайшее время
+        <!-- 3. Номер телефона батюшки -->
+        <div class="donate-method">
+            <div class="donate-method-title">📞 Перевод по номеру телефона</div>
+            <div class="donate-phone">+7 (924) 460-52-20</div>
+            <div class="donate-details">
+                Получатель: <strong>Иоанн Александрович С.</strong><br>
+                Назначение: <strong>Пожертвование на храм</strong><br>
+                <span style="color:#8B5A2A">Работает через любой банк</span>
             </div>
-            <div id="sbp-link" style="display:none">
-                <button class="btn-donate-sber" style="margin-bottom:0;background:linear-gradient(135deg,#1565C0,#0D47A1)"
-                    onclick="window.open(SBP_URL,'_blank')">
-                    <span class="icon" style="font-size:28px;margin-bottom:6px">⚡</span>
-                    <span class="title" style="font-size:19px">Перейти к оплате СБП</span>
-                    <span class="subtitle">Любой банк — мгновенно</span>
-                </button>
-            </div>
+            <button class="btn-copy" onclick="copyDonatePhone()">📋 Скопировать номер</button>
         </div>
 
         <button class="btn-secondary" onclick="goTo('screen-home')" style="margin-top:8px">← На главную</button>
@@ -438,7 +444,9 @@
                 <div class="step-dot"></div>
             </div>
         </div>
-        <div class="section-title">Какую записку подать?</div>
+        <div class="section-title">Что подать?</div>
+
+        <div class="type-section-label">📜 Записка (упоминание за богослужением)</div>
         <button class="type-btn type-btn-zdravie" onclick="selectType('zdravie')">
             <span class="type-icon">🕊</span>
             За здравие
@@ -459,6 +467,19 @@
             О путешествующих
             <span class="type-desc">За тех, кто в дороге</span>
         </button>
+
+        <div class="type-section-label">🕯 Заказная служба (отдельное богослужение)</div>
+        <button class="type-btn type-btn-panikhida" onclick="selectType('panikhida')">
+            <span class="type-icon">🕯</span>
+            Панихида
+            <span class="type-desc">Поминальная служба по усопшим</span>
+        </button>
+        <button class="type-btn type-btn-molebn" onclick="selectType('molebn')">
+            <span class="type-icon">🙏</span>
+            Молебен
+            <span class="type-desc">Просительная служба — о здравии, в нужде, с благодарением</span>
+        </button>
+
         <button class="btn-secondary" onclick="goTo('screen-home')">← Назад</button>
     </div>
 
@@ -595,12 +616,6 @@
     let currentType = '';
     let finalNames = []; // итоговый список в родительном падеже
 
-    // ─── СБП ссылка (пока пусто, заполним когда батюшка пришлёт) ─────────────
-    const SBP_URL = null; // заменить на ссылку СБП когда будет
-    if (SBP_URL) {
-        document.getElementById('sbp-soon').style.display = 'none';
-        document.getElementById('sbp-link').style.display = 'block';
-    }
 
     function goTo(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -627,10 +642,12 @@
     }
 
     const TYPE_LABELS = {
-        zdravie: '🕊 За здравие',
-        upokoj:  '✞ За упокой',
-        bolash:  '🤒 О болящих',
-        putesh:  '✈️ О путешествующих',
+        zdravie:   '🕊 За здравие',
+        upokoj:    '✞ За упокой',
+        bolash:    '🤒 О болящих',
+        putesh:    '✈️ О путешествующих',
+        panikhida: '🕯 Панихида',
+        molebn:    '🙏 Молебен',
     };
 
     function selectType(type) {
