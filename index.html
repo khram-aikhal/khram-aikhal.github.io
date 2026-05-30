@@ -447,13 +447,8 @@
     <div class="screen active" id="screen-home">
         <div class="divider">✦ ✦ ✦</div>
 
-        <!-- Объявление -->
-        <div id="announce-block" style="background:linear-gradient(135deg,#2E6B2E,#1a4d1a);color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
-            <div style="font-size:12px;opacity:.75;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase">Объявление</div>
-            <div style="font-size:16px;font-family:Georgia,serif;font-weight:bold;line-height:1.4">🌿 Святая Троица — 31 мая</div>
-            <div style="font-size:14px;margin-top:6px;opacity:.92">Праздничная Литургия в 09:00</div>
-            <div style="font-size:13px;margin-top:4px;opacity:.8">Всенощное бдение сегодня в 16:30</div>
-        </div>
+        <!-- Объявление (автоматическое по праздникам) -->
+        <div id="announce-block" style="display:none;color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center"></div>
 
         <!-- За кого подают записки -->
         <div class="info-block">
@@ -2774,6 +2769,113 @@
     if (HASH_TYPES.includes(hashType)) {
         selectType(hashType);
     }
+
+    // ─── Автообъявления на двунадесятые и великие праздники ─────
+    function showFeastAnnouncement() {
+        const block = document.getElementById('announce-block');
+        if (!block) return;
+        const today = new Date(); today.setHours(0,0,0,0);
+        const year = today.getFullYear();
+        const e = orthodoxEaster(year);
+        const add = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        const D = (m, d) => new Date(year, m - 1, d);
+
+        // [name, emoji, color, date, showBefore, showAfter, eveLines[], dayLines[]]
+        const FEASTS = [
+            ['Рождество Христово ·\nПрестольный праздник', '⭐', '#1A237E',
+                D(1,7), 2, 1,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Богослужение вечером в 16:00']],
+            ['Богоявление Господне\n(Крещение)', '💧', '#1565C0',
+                D(1,19), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Великое освящение воды']],
+            ['Сретение Господне', '🕯', '#8B1A1A',
+                D(2,15), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Благовещение\nПресвятой Богородицы', '🕊', '#1565C0',
+                D(4,7), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Вход Господень\nв Иерусалим', '🌿', '#2E6B2E',
+                add(e,-7), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Светлое Христово\nВоскресение — Пасха!', '🌅', '#8B1A1A',
+                e, 2, 1,
+                ['Пасхальная заутреня в полночь', 'Крестный ход · Литургия'],
+                ['Пасхальная Литургия', 'Вечерня в 16:00']],
+            ['Вознесение Господне', '✦', '#8B1A1A',
+                add(e,39), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Троицкая\nродительская суббота', '🕯', '#4A4A4A',
+                add(e,48), 0, 0,
+                [],
+                ['Заупокойная служба в 15:45', 'Всенощное бдение в 16:30']],
+            ['Святая Троица\n· Пятидесятница', '🌿', '#2E6B2E',
+                add(e,49), 1, 1,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Богослужение вечером в 16:00']],
+            ['Преображение Господне', '✨', '#6A4A00',
+                D(8,19), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Освящение плодов']],
+            ['Успение\nПресвятой Богородицы', '🌸', '#1565C0',
+                D(8,28), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Рождество\nПресвятой Богородицы', '🌸', '#1565C0',
+                D(9,21), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Воздвижение\nЧестного Животворящего Креста', '✞', '#8B1A1A',
+                D(9,27), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Покров\nПресвятой Богородицы', '🕊', '#1565C0',
+                D(10,14), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Введение во храм\nПресвятой Богородицы', '🕯', '#1565C0',
+                D(12,4), 1, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+        ];
+
+        function hexDarken(hex) {
+            return '#' + hex.slice(1).match(/.{2}/g)
+                .map(c => Math.max(0, parseInt(c,16) - 35).toString(16).padStart(2,'0')).join('');
+        }
+
+        for (const [name, emoji, color, date, showBefore, showAfter, eveLines, dayLines] of FEASTS) {
+            const diff = Math.round((date - today) / 86400000);
+            if (diff < -showAfter || diff > showBefore) continue;
+
+            let title, lines;
+            if (diff > 0) {
+                title = diff === 1 ? `Завтра — ${name}` : `Через ${diff} дня — ${name}`;
+                lines = eveLines;
+            } else if (diff === 0) {
+                title = `Сегодня — ${name}!`;
+                lines = dayLines;
+            } else {
+                title = name; lines = [];
+            }
+
+            block.style.background = `linear-gradient(135deg,${color},${hexDarken(color)})`;
+            block.innerHTML =
+                `<div style="font-size:11px;opacity:.7;letter-spacing:1.5px;margin-bottom:6px;text-transform:uppercase">Богослужение</div>`
+                + `<div style="font-size:15px;font-family:Georgia,serif;font-weight:bold;line-height:1.45;white-space:pre-line">${emoji} ${title}</div>`
+                + lines.map(l => `<div style="font-size:13px;margin-top:5px;opacity:.93">${l}</div>`).join('');
+            block.style.display = 'block';
+            return;
+        }
+        block.style.display = 'none';
+    }
+
+    showFeastAnnouncement();
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
