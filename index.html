@@ -2291,7 +2291,7 @@
     }
 
     function submitToBot(type, names) {
-        fetch('https://perry-mime-motor-holdem.trycloudflare.com/zapiski', {
+        fetch('https://modem-diamonds-halifax-excerpt.trycloudflare.com/zapiski', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type, names })
@@ -2325,7 +2325,7 @@
     async function clearNotes() {
         if (!confirm('Вы уверены? Все записки будут удалены после службы.')) return;
         try {
-            const resp = await fetch('https://perry-mime-motor-holdem.trycloudflare.com/clear', { method: 'POST' });
+            const resp = await fetch('https://modem-diamonds-halifax-excerpt.trycloudflare.com/clear', { method: 'POST' });
             if (resp.ok) {
                 alert('✅ Записки очищены.');
                 document.getElementById('admin-panel').style.display = 'none';
