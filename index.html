@@ -315,6 +315,61 @@
         }
         .lb-save { background:#C8A04A; color:#2C1208; }
         .lb-share { background:#2C1208; color:#C8A04A; border:1px solid #C8A04A; }
+        /* ── О храме ── */
+        .about-photo {
+            width: 100%; height: 200px; object-fit: cover;
+            border-radius: 12px; margin-bottom: 20px;
+            border: 2px solid #C8A04A;
+        }
+        .about-gallery {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-bottom: 20px;
+        }
+        .about-gallery img {
+            width: 100%; height: 120px; object-fit: cover;
+            border-radius: 8px; border: 1px solid #C8A04A;
+        }
+        .about-title {
+            font-size: 22px; color: #3D1208; text-align: center;
+            margin-bottom: 6px; font-weight: normal;
+        }
+        .about-subtitle {
+            font-size: 14px; color: #C8A04A; text-align: center;
+            font-style: italic; margin-bottom: 20px; letter-spacing: 0.5px;
+        }
+        .about-text {
+            font-size: 15px; line-height: 1.85; color: #3A2010;
+            margin-bottom: 20px;
+        }
+        .about-text p { margin-bottom: 14px; }
+        .about-text strong { color: #5C1A08; }
+        .about-facts {
+            background: #FDF6E3; border: 1px solid #C8A04A;
+            border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
+        }
+        .about-fact {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid #EED99A;
+        }
+        .about-fact:last-child { border-bottom: none; padding-bottom: 0; }
+        .about-fact-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+        .about-fact-body { flex: 1; }
+        .about-fact-label { font-size: 12px; color: #8B6A3A; text-transform: uppercase; letter-spacing: 1px; }
+        .about-fact-value { font-size: 15px; color: #2C1A0A; margin-top: 2px; line-height: 1.5; }
+        .about-fact-value a { color: #5C1A08; text-decoration: none; }
+        .btn-about {
+            display: block; width: 100%; padding: 20px 20px 20px 24px;
+            margin-bottom: 14px; border: 1px solid #D4B078;
+            border-radius: 10px; border-left: 5px solid #8B4A2A;
+            font-family: 'Georgia', serif; cursor: pointer; text-align: left;
+            background: #FEF9F0; color: #3D1208;
+            box-shadow: 0 2px 8px rgba(44,18,8,0.1);
+            transition: transform 0.1s;
+        }
+        .btn-about:active { transform: scale(0.98); }
+        .btn-about .icon { font-size: 34px; display: block; margin-bottom: 8px; }
+        .btn-about .title { font-size: 22px; font-weight: bold; display: block; }
+        .btn-about .subtitle { font-size: 14px; margin-top: 4px; display: block; opacity: 0.7; font-style: italic; }
     </style>
 </head>
 <body>
@@ -368,6 +423,12 @@
             <span class="icon">💳</span>
             <span class="title">Пожертвование на храм</span>
             <span class="subtitle">СберБанк · Любой банк · СБП</span>
+        </button>
+
+        <button class="btn-about" onclick="goTo('screen-about')">
+            <span class="icon">🕍</span>
+            <span class="title">О нашем храме</span>
+            <span class="subtitle">История · Настоятель · Контакты</span>
         </button>
 
         <!-- Расписание богослужений -->
@@ -615,6 +676,71 @@
         <button class="btn-primary" onclick="goTo('screen-home')">На главную</button>
     </div>
 
+
+    <!-- О храме -->
+    <div class="screen" id="screen-about">
+        <div class="divider">✦ ✦ ✦</div>
+
+        <div class="about-title">✞ Храм Рождества Христова</div>
+        <div class="about-subtitle">посёлок Айхал · Якутия</div>
+
+        <img src="h2.jpg" alt="Храм Рождества Христова" class="about-photo">
+
+        <div class="about-gallery">
+            <img src="h4.jpg" alt="Храм">
+            <img src="h5.jpg" alt="Храм">
+        </div>
+
+        <div class="about-text">
+            <p>Посёлок Айхал — один из алмазных городов Якутии. Само название <strong>«Айхал»</strong> в переводе с якутского означает <em>«слава»</em> — и этот посёлок действительно прославлен богатством недр и трудолюбием своих жителей.</p>
+
+            <p>Православный <strong>храм Рождества Христова</strong> был возведён в начале XXI века при поддержке Акционерной компании <strong>«АЛРОСА»</strong>. Он стоит на центральной площади посёлка — ныне именуемой <strong>Соборной</strong> — и виден из разных уголков Айхала.</p>
+
+            <p>Особая гордость храма — <strong>фарфоровый иконостас</strong>, один из редчайших в России. Золотые купола и колокольня стали неотъемлемой частью облика посёлка — здесь встречают Рождество, Пасху, крестят детей и венчают молодожёнов.</p>
+
+            <p>Приход живёт полноценной церковной жизнью: регулярные богослужения, исповедь и причастие, требы, молебны, панихиды. Двери храма открыты для всех, кто ищет веру, утешение или просто тишину.</p>
+        </div>
+
+        <div class="about-facts">
+            <div class="about-fact">
+                <div class="about-fact-icon">📍</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Адрес</div>
+                    <div class="about-fact-value">Республика Саха (Якутия), Мирнинский район, пос. Айхал, Соборная площадь</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">✝️</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Епархия</div>
+                    <div class="about-fact-value">Якутская и Ленская епархия Русской Православной Церкви</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">👨‍⚕️</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Настоятель</div>
+                    <div class="about-fact-value">Иерей Иоанн Серкин</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">📞</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Телефон храма</div>
+                    <div class="about-fact-value"><a href="tel:+79244605220">+7 924 460-52-20</a></div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">🕯</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Престольный праздник</div>
+                    <div class="about-fact-value">Рождество Христово · 7 января</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-secondary" onclick="goTo('screen-home')">← На главную</button>
+    </div>
 
     <!-- Лайтбокс -->
     <div id="lightbox">
