@@ -644,6 +644,12 @@
             <div class="names-list" id="successNames"></div>
         </div>
 
+        <!-- Быстрая подача других категорий -->
+        <div id="quick-types" style="margin-top:20px;margin-bottom:4px">
+            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px;letter-spacing:0.5px">Подать ещё записку:</div>
+            <div id="quick-type-buttons" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+        </div>
+
         <div style="margin-top:20px;font-size:14px;color:#8B5A2A;text-align:center;margin-bottom:12px">
             🙏 Пожертвование на храм — по желанию
         </div>
@@ -836,6 +842,27 @@
         document.getElementById('names-title').textContent = (TYPE_LABELS[type] || type) + ' — имена';
         document.getElementById('namesInput').value = '';
         goTo('screen-names');
+    }
+
+    const ALL_TYPES = [
+        { id: 'zdravie',   label: '🙏 О здравии' },
+        { id: 'upokoj',    label: '✝️ Об упокоении' },
+        { id: 'bolash',    label: '🤒 О болящих' },
+        { id: 'putesh',    label: '✈️ О путешествующих' },
+        { id: 'panikhida', label: '🕯 Панихида' },
+        { id: 'molebn',    label: '🙏 Молебен' },
+    ];
+
+    function renderQuickTypes() {
+        const container = document.getElementById('quick-type-buttons');
+        container.innerHTML = '';
+        ALL_TYPES.filter(t => t.id !== currentType).forEach(t => {
+            const btn = document.createElement('button');
+            btn.textContent = t.label;
+            btn.style.cssText = 'padding:10px 14px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:20px;font-family:Georgia,serif;font-size:14px;color:#3D1208;cursor:pointer;white-space:nowrap';
+            btn.onclick = () => selectType(t.id);
+            container.appendChild(btn);
+        });
     }
 
     // ─── Полная таблица: любая форма → каноническое церковное имя ──────────
@@ -2278,6 +2305,7 @@
 
     function submitNoteOnly() {
         submitToBot(currentType, finalNames);
+        renderQuickTypes();
         goTo('screen-success');
     }
 
