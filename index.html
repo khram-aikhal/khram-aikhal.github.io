@@ -2697,6 +2697,13 @@
         }, 2000);
     }
 
+    // Прямые ссылки по хэшу: #panikhida, #zdravie, #upokoj и т.д.
+    const HASH_TYPES = ['zdravie','upokoj','bolash','putesh','panikhida','molebn'];
+    const hashType = window.location.hash.replace('#', '');
+    if (HASH_TYPES.includes(hashType)) {
+        selectType(hashType);
+    }
+
     loadCards().then(() => {
         if (window.location.hash === '#cards') {
             const el = document.getElementById('cards');
