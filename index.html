@@ -316,19 +316,41 @@
         .lb-save { background:#C8A04A; color:#2C1208; }
         .lb-share { background:#2C1208; color:#C8A04A; border:1px solid #C8A04A; }
         /* ── О храме ── */
-        .about-photo {
-            width: 100%; height: 200px; object-fit: cover;
-            border-radius: 12px; margin-bottom: 20px;
-            border: 2px solid #C8A04A;
+        .about-gallery-scroll {
+            display: flex; gap: 10px;
+            overflow-x: auto; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px; margin-bottom: 20px;
+            scrollbar-width: none;
         }
-        .about-gallery {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 8px; margin-bottom: 20px;
+        .about-gallery-scroll::-webkit-scrollbar { display: none; }
+        .about-gallery-scroll img {
+            flex-shrink: 0; width: 78vw; max-width: 320px; height: 220px;
+            object-fit: cover; border-radius: 12px;
+            border: 2px solid #C8A04A; scroll-snap-align: start;
         }
-        .about-gallery img {
-            width: 100%; height: 120px; object-fit: cover;
-            border-radius: 8px; border: 1px solid #C8A04A;
+        .gallery-hint {
+            text-align: center; font-size: 12px; color: #B09060;
+            margin: -12px 0 16px; font-style: italic;
         }
+        .rector-card {
+            display: flex; align-items: center; gap: 16px;
+            background: #FDF6E3; border: 1px solid #C8A04A;
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+        }
+        .rector-photo {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #E8D9B0; border: 2px solid #C8A04A;
+            overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+        }
+        .rector-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .rector-info { flex: 1; }
+        .rector-name { font-size: 17px; font-weight: bold; color: #3D1208; }
+        .rector-title { font-size: 13px; color: #8B6A3A; margin-top: 3px; }
+        .rector-phone { font-size: 14px; color: #5C1A08; margin-top: 6px; }
+        .rector-phone a { color: #5C1A08; text-decoration: none; }
         .about-title {
             font-size: 22px; color: #3D1208; text-align: center;
             margin-bottom: 6px; font-weight: normal;
@@ -426,7 +448,7 @@
         </button>
 
         <button class="btn-about" onclick="goTo('screen-about')">
-            <span class="icon">🕍</span>
+            <span class="icon">⛪</span>
             <span class="title">О нашем храме</span>
             <span class="subtitle">История · Настоятель · Контакты</span>
         </button>
@@ -686,11 +708,24 @@
         <div class="about-title">✞ Храм Рождества Христова</div>
         <div class="about-subtitle">посёлок Айхал · Якутия</div>
 
-        <img src="h2.jpg" alt="Храм Рождества Христова" class="about-photo">
+        <!-- Горизонтальная галерея — листать пальцем → -->
+        <div class="about-gallery-scroll" id="aboutGallery">
+            <img src="h1.jpg" alt="Храм зимой">
+            <img src="h2.jpg" alt="Храм — колокольня">
+            <img src="h3.jpg" alt="Храм вечером">
+            <img src="h4.jpg" alt="Храм в подсветке">
+            <img src="h5.jpg" alt="Храм летом">
+        </div>
+        <div class="gallery-hint">← листайте фото →</div>
 
-        <div class="about-gallery">
-            <img src="h4.jpg" alt="Храм">
-            <img src="h5.jpg" alt="Храм">
+        <!-- Настоятель -->
+        <div class="rector-card">
+            <div class="rector-photo" id="rectorPhoto">✞</div>
+            <div class="rector-info">
+                <div class="rector-name">Иерей Иоанн Серкин</div>
+                <div class="rector-title">Настоятель храма</div>
+                <div class="rector-phone"><a href="tel:+79244605220">+7 924 460-52-20</a></div>
+            </div>
         </div>
 
         <div class="about-text">
