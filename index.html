@@ -467,6 +467,7 @@
         </div>
 
         <!-- Праздничные открытки -->
+        <div id="cards"></div>
         <div id="cards-section" style="display:none">
             <div class="divider">✦ ✦ ✦</div>
             <div style="text-align:center;font-size:18px;color:#8B6A3A;font-family:Georgia,serif;margin-bottom:14px;font-style:italic">🎉 Открытки к празднику для вас</div>
@@ -2567,7 +2568,12 @@
         }
     }
 
-    loadCards();
+    loadCards().then(() => {
+        if (window.location.hash === '#cards') {
+            const el = document.getElementById('cards');
+            if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+    });
 
 </script>
 </body>
