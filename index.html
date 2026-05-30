@@ -2593,6 +2593,9 @@
 
     async function saveCardDirect(url, event) {
         event.stopPropagation();
+        // Считаем скачивание
+        const cardName = url.split('/cards/')[1] || url.split('/').pop();
+        fetch('https://response-tops-previously-packaging.trycloudflare.com/cards/track?card=' + encodeURIComponent(cardName), { method: 'POST' }).catch(() => {});
         try {
             const r = await fetch(url);
             const blob = await r.blob();
