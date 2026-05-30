@@ -101,6 +101,25 @@ tr.day-start td{border-top:2px solid #2E6B2E}
 </div>
 
 <script>
+// Если последняя дата расписания в прошлом — показать предупреждение
+(function() {
+    const rows = document.querySelectorAll('td.day');
+    if (!rows.length) return;
+    const lastText = rows[rows.length - 1].textContent;
+    const match = lastText.match(/(\d+)\s+([\wа-яё]+)/i);
+    if (!match) return;
+    const MONTHS = {января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
+    const mo = MONTHS[match[2].toLowerCase()];
+    if (mo === undefined) return;
+    const lastDate = new Date(new Date().getFullYear(), mo, parseInt(match[1]) + 1);
+    if (lastDate < new Date()) {
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;margin:10px;text-align:center;font-size:13px;color:#664d03';
+        banner.innerHTML = '⚠️ Это расписание прошедшей недели.<br>Актуальное уточняйте у настоятеля: <a href="tel:+79244605220" style="color:#664d03;font-weight:bold">+7 (924) 460-52-20</a>';
+        document.querySelector('.wrap').insertBefore(banner, document.querySelector('table') || document.querySelector('.footer'));
+    }
+})();
+
 function shareSchedule() {
   const url = window.location.href;
   const title = 'Расписание богослужений — Храм Рождества Христова, пос. Айхал';

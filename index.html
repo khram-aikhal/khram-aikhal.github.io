@@ -925,6 +925,7 @@
         document.getElementById(id).classList.add('active');
         window.scrollTo(0, 0);
         if (id === 'screen-names') renderSavedLists();
+        if (id === 'screen-question') resetQuestion();
     }
 
     function copyDonatePhone() {
@@ -2433,23 +2434,44 @@
         goTo('screen-donate');
     }
 
+    function resetQuestion() {
+        ['question-name','question-text'].forEach(id => document.getElementById(id).style.display = '');
+        document.getElementById('question-success').style.display = 'none';
+        const btn = document.querySelector('#screen-question .btn-primary');
+        if (btn) { btn.disabled = false; btn.textContent = 'Отправить вопрос →'; btn.style.display = ''; }
+    }
+
     async function sendQuestion() {
         const name = document.getElementById('question-name').value.trim();
         const text = document.getElementById('question-text').value.trim();
         if (!text) { document.getElementById('question-text').focus(); return; }
         const btn = document.querySelector('#screen-question .btn-primary');
         btn.disabled = true; btn.textContent = 'Отправляю…';
+        let ok = false;
         try {
-            await fetch('https://response-tops-previously-packaging.trycloudflare.com/question', {
+            const r = await fetch('https://response-tops-previously-packaging.trycloudflare.com/question', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: name || 'Прихожанин', text })
             });
+            ok = r.ok;
         } catch {}
         btn.style.display = 'none';
         document.getElementById('question-text').style.display = 'none';
         document.getElementById('question-name').style.display = 'none';
-        document.getElementById('question-success').style.display = 'block';
+        const successDiv = document.getElementById('question-success');
+        successDiv.style.display = 'block';
+        if (!ok) {
+            successDiv.style.background = '#fff8f0';
+            successDiv.style.borderColor = '#C8A04A';
+            successDiv.innerHTML =
+                '<div style="font-size:24px;margin-bottom:8px">📞</div>'
+                + '<div style="font-size:15px;font-weight:bold;color:#8B1A1A;margin-bottom:6px">Нет связи с сервером</div>'
+                + '<div style="font-size:13px;color:#555;margin-bottom:12px">Позвоните батюшке напрямую:</div>'
+                + '<a href="tel:+79244605220" style="display:block;font-size:20px;font-weight:bold;color:#8B1A1A;text-decoration:none;margin-bottom:4px">+7 (924) 460-52-20</a>'
+                + '<div style="font-size:12px;color:#888;margin-bottom:12px">Иерей Иоанн Серкин</div>'
+                + '<button onclick="goTo(\'screen-home\')" class="btn-secondary" style="margin-top:6px">← На главную</button>';
+        }
     }
 
     function submitToBot(type, names) {
