@@ -305,6 +305,22 @@
             text-align:center; padding:24px 16px; background:#FDF6E3;
             border-radius:12px; border:1px dashed #C8A04A;
         }
+        /* ── Сохранённые списки ── */
+        .saved-list-item {
+            display:flex; align-items:center; gap:8px;
+            background:#FDF6E3; border:1px solid #C8A04A;
+            border-radius:10px; padding:10px 12px; margin-bottom:8px;
+        }
+        .saved-list-name { font-size:14px; color:#3D1208; font-family:Georgia,serif; font-weight:bold; }
+        .saved-list-preview { font-size:12px; color:#8B5A2A; margin-top:2px; }
+        .saved-list-use {
+            padding:8px 13px; background:#8B1A1A; color:#F5E6C8; border:none;
+            border-radius:8px; font-family:Georgia,serif; font-size:13px; cursor:pointer; white-space:nowrap;
+        }
+        .saved-list-del {
+            padding:8px 9px; background:none; border:1px solid #ddd;
+            border-radius:8px; font-size:13px; cursor:pointer; color:#aaa; line-height:1;
+        }
         /* ── Лайтбокс ── */
         #lightbox {
             display:none; position:fixed; inset:0;
@@ -593,6 +609,13 @@
             <div class="prayer-text">«Господи, помяни рабов Твоих и исполни их прошения,<br>яже ко спасению»</div>
         </div>
 
+        <!-- Сохранённые списки -->
+        <div id="saved-lists-block" style="display:none;margin-bottom:14px">
+            <div style="font-size:13px;color:#8B5A2A;margin-bottom:8px;font-weight:bold">📋 Мои сохранённые списки:</div>
+            <div id="saved-lists-container"></div>
+            <div style="text-align:center;font-size:12px;color:#bbb;margin:8px 0 4px">· · · или введите новые имена · · ·</div>
+        </div>
+
         <textarea id="namesInput" rows="8"
             placeholder="Александра&#10;Марии&#10;Николая&#10;Анны"></textarea>
         <p class="hint">Пишите каждое имя на новой строке.<br>Используйте полное православное имя (не уменьшительное).</p>
@@ -657,6 +680,17 @@
         <div id="quick-types" style="margin-top:20px;margin-bottom:4px">
             <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px;letter-spacing:0.5px">Подать ещё записку:</div>
             <div id="quick-type-buttons" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+        </div>
+
+        <!-- Сохранить список имён -->
+        <div id="save-list-prompt" style="display:none;margin-top:16px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:12px;padding:14px">
+            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px">💾 Сохранить этот список имён для следующего раза?</div>
+            <input type="text" id="save-list-name" placeholder="Название: Родители, За работой…"
+                   style="width:100%;padding:10px;border:1px solid #C8A04A;border-radius:8px;font-family:Georgia,serif;font-size:14px;box-sizing:border-box;margin-bottom:8px;background:#fff">
+            <button onclick="saveCurrentList()" style="width:100%;padding:11px;background:#8B1A1A;color:#F5E6C8;border:none;border-radius:8px;font-family:Georgia,serif;font-size:14px;cursor:pointer">
+                Сохранить список
+            </button>
+            <div id="save-list-done" style="display:none;color:#2E6B2E;font-size:13px;text-align:center;margin-top:8px;font-weight:bold">✅ Список сохранён!</div>
         </div>
 
         <div style="margin-top:20px;font-size:14px;color:#8B5A2A;text-align:center;margin-bottom:12px">
@@ -846,6 +880,7 @@
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         window.scrollTo(0, 0);
+        if (id === 'screen-names') renderSavedLists();
     }
 
     function copyDonatePhone() {
@@ -2346,6 +2381,7 @@
         submitToBot(currentType, finalNames);
         renderQuickTypes();
         goTo('screen-success');
+        showSaveListPrompt();
     }
 
     function submitNote() {
@@ -2586,6 +2622,79 @@
         } else {
             window.open(currentCardUrl, '_blank');
         }
+    }
+
+    // ─── Сохранённые списки имён ─────────────────────────────────
+    const LISTS_KEY = 'khram_saved_lists';
+
+    function loadSavedLists() {
+        try { return JSON.parse(localStorage.getItem(LISTS_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveSavedLists(lists) {
+        localStorage.setItem(LISTS_KEY, JSON.stringify(lists));
+    }
+
+    function renderSavedLists() {
+        const lists = loadSavedLists();
+        const block = document.getElementById('saved-lists-block');
+        const container = document.getElementById('saved-lists-container');
+        if (!lists.length) { block.style.display = 'none'; return; }
+        block.style.display = 'block';
+        container.innerHTML = '';
+        lists.forEach((list, i) => {
+            const lines = list.names.split('\n').filter(Boolean);
+            const preview = lines.slice(0, 4).join(', ') + (lines.length > 4 ? ' и ещё ' + (lines.length - 4) + ' имён' : '');
+            const div = document.createElement('div');
+            div.className = 'saved-list-item';
+            div.innerHTML =
+                '<div style="flex:1">'
+                + '<div class="saved-list-name">' + list.name + '</div>'
+                + '<div class="saved-list-preview">' + preview + '</div>'
+                + '</div>'
+                + '<button class="saved-list-use" onclick="useList(' + i + ')">Использовать</button>'
+                + '<button class="saved-list-del" onclick="deleteList(' + i + ')" title="Удалить">✕</button>';
+            container.appendChild(div);
+        });
+    }
+
+    function useList(index) {
+        const lists = loadSavedLists();
+        if (lists[index]) document.getElementById('namesInput').value = lists[index].names;
+    }
+
+    function deleteList(index) {
+        const lists = loadSavedLists();
+        lists.splice(index, 1);
+        saveSavedLists(lists);
+        renderSavedLists();
+    }
+
+    function showSaveListPrompt() {
+        const prompt = document.getElementById('save-list-prompt');
+        prompt.style.display = 'block';
+        document.getElementById('save-list-done').style.display = 'none';
+        document.getElementById('save-list-name').value = '';
+    }
+
+    function saveCurrentList() {
+        const nameInput = document.getElementById('save-list-name').value.trim();
+        if (!nameInput) { document.getElementById('save-list-name').focus(); return; }
+        const rawNames = document.getElementById('namesInput').value.trim();
+        if (!rawNames) return;
+        const lists = loadSavedLists();
+        const existing = lists.findIndex(l => l.name === nameInput);
+        if (existing >= 0) {
+            lists[existing].names = rawNames;
+        } else {
+            lists.push({ name: nameInput, names: rawNames });
+        }
+        saveSavedLists(lists);
+        document.getElementById('save-list-done').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('save-list-prompt').style.display = 'none';
+        }, 2000);
     }
 
     loadCards().then(() => {
