@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinterest — загрузка открыток</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
+    h1 { font-size: 22px; margin-bottom: 6px; color: #e60023; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 24px; }
+
+    .copy-block {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .copy-block label { font-size: 13px; color: #999; display: block; margin-bottom: 6px; }
+    .copy-row {
+      display: flex; gap: 10px; align-items: center;
+    }
+    .copy-text {
+      flex: 1; font-size: 14px; background: #f8f8f8;
+      border: 1px solid #ddd; border-radius: 8px;
+      padding: 10px 12px; color: #333; word-break: break-all;
+    }
+    .btn-copy {
+      background: #e60023; color: #fff; border: none;
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 14px; cursor: pointer; white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover { background: #c0001d; }
+    .btn-copy.copied { background: #2a9d2a; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .card img { width: 100%; display: block; }
+    .card-footer {
+      padding: 10px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px;
+    }
+    .card-num { font-size: 13px; color: #999; }
+    .btn-card-copy {
+      background: #e60023; color: #fff; border: none;
+      border-radius: 6px; padding: 6px 12px;
+      font-size: 13px; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-card-copy:hover { background: #c0001d; }
+    .btn-card-copy.copied { background: #2a9d2a; }
+
+    .pinterest-link {
+      display: inline-block;
+      background: #e60023;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 28px 0 14px;
+      color: #222;
+    }
+    .done { text-decoration: line-through; opacity: 0.4; }
+  </style>
+</head>
+<body>
+
+<h1>📌 Загрузка открыток на Pinterest</h1>
+<p class="subtitle">Святая Троица · 18 открыток</p>
+
+<a class="pinterest-link" href="https://ru.pinterest.com/pin-builder/" target="_blank">
+  ➕ Открыть создание пина
+</a>
+
+<div class="section-title">Скопируй для каждого пина:</div>
+
+<div class="copy-block">
+  <label>Название</label>
+  <div class="copy-row">
+    <div class="copy-text">С праздником Святой Троицы!</div>
+    <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы!')">Копировать</button>
+  </div>
+</div>
+
+<div class="copy-block">
+  <label>Описание + хэштеги</label>
+  <div class="copy-row">
+    <div class="copy-text">С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником</div>
+    <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником')">Копировать</button>
+  </div>
+</div>
+
+<div class="copy-block">
+  <label>Ссылка</label>
+  <div class="copy-row">
+    <div class="copy-text">https://khram-aikhal.github.io</div>
+    <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
+  </div>
+</div>
+
+<div class="section-title">Открытки — кнопка копирует URL:</div>
+
+<div class="cards-grid" id="grid"></div>
+
+<script>
+const BASE = 'https://khram-aikhal.github.io/cards/troitsa/';
+const cards = [
+  'troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg',
+  'troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg',
+  'troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg',
+  'troitsa-13.jpg','troitsa-14.jpg','troitsa-15.jpg','troitsa-16.jpg',
+  'troitsa-17.jpg','troitsa-18.jpg'
+];
+
+const grid = document.getElementById('grid');
+cards.forEach((name, i) => {
+  const url = BASE + name;
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.id = 'card-' + i;
+  div.innerHTML = `
+    <img src="${url}" loading="lazy" alt="Открытка ${i+1}">
+    <div class="card-footer">
+      <span class="card-num">#${i+1}</span>
+      <button class="btn-card-copy" onclick="copyCard(this, '${url}', ${i})">📋 URL</button>
+    </div>
+  `;
+  grid.appendChild(div);
+});
+
+function copyThis(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Копировать';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function copyCard(btn, url, idx) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('copied');
+    // Помечаем карточку как готовую
+    setTimeout(() => {
+      btn.textContent = '✓ Готово';
+      document.getElementById('card-' + idx).style.opacity = '0.4';
+    }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>
