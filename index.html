@@ -628,7 +628,23 @@
 
         <textarea id="namesInput" rows="8"
             placeholder="Александра&#10;Марии&#10;Николая&#10;Анны"></textarea>
-        <p class="hint">Пишите каждое имя на новой строке.<br>Используйте полное православное имя (не уменьшительное).</p>
+        <p class="hint">Пишите каждое имя на новой строке.<br>Можно вставить через запятую — сами разберутся по строкам.</p>
+        <script>
+        document.getElementById('namesInput').addEventListener('input', function() {
+            var val = this.value;
+            // Если есть запятые или точки с запятой — разбиваем на строки
+            if (val.includes(',') || val.includes(';')) {
+                var cursorPos = this.selectionStart;
+                var names = val
+                    .split(/[,;]+/)
+                    .map(function(n) { return n.trim(); })
+                    .filter(function(n) { return n.length > 0; });
+                this.value = names.join('\n');
+                // Ставим курсор в конец
+                this.selectionStart = this.selectionEnd = this.value.length;
+            }
+        });
+        </script>
         <button class="btn-primary" onclick="processNames()">Далее →</button>
         <button class="btn-secondary" onclick="goTo('screen-choose-type')">← Назад</button>
     </div>
