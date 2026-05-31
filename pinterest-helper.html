@@ -79,92 +79,159 @@
       color: #222;
     }
     .done { text-decoration: line-through; opacity: 0.4; }
+    .tab-btn {
+      padding: 10px 18px; border: 2px solid #e60023; border-radius: 8px;
+      background: #fff; color: #e60023; font-size: 14px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: #e60023; color: #fff; }
   </style>
 </head>
 <body>
 
 <h1>📌 Загрузка открыток на Pinterest</h1>
-<p class="subtitle">Святая Троица · 18 открыток</p>
 
 <a class="pinterest-link" href="https://ru.pinterest.com/pin-builder/" target="_blank">
   ➕ Открыть создание пина
 </a>
 
-<div class="section-title">Скопируй для каждого пина:</div>
-
-<div class="copy-block">
-  <label>Название</label>
-  <div class="copy-row">
-    <div class="copy-text">С праздником Святой Троицы!</div>
-    <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы!')">Копировать</button>
-  </div>
+<!-- ТАБЫ -->
+<div style="display:flex;gap:10px;margin-bottom:24px;">
+  <button class="tab-btn active" onclick="switchTab('troitsa')">🌿 Святая Троица (18)</button>
+  <button class="tab-btn" onclick="switchTab('rod')">🕯 Родительская суббота (14)</button>
 </div>
 
-<div class="copy-block">
-  <label>Описание + хэштеги</label>
-  <div class="copy-row">
-    <div class="copy-text">С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником</div>
-    <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником')">Копировать</button>
+<!-- ═══ ТРОИЦА ═══ -->
+<div id="tab-troitsa">
+  <div class="section-title">Скопируй для каждого пина:</div>
+
+  <div class="copy-block">
+    <label>Название</label>
+    <div class="copy-row">
+      <div class="copy-text">С праздником Святой Троицы!</div>
+      <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы!')">Копировать</button>
+    </div>
   </div>
+  <div class="copy-block">
+    <label>Описание + хэштеги</label>
+    <div class="copy-row">
+      <div class="copy-text">С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником</div>
+      <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником')">Копировать</button>
+    </div>
+  </div>
+  <div class="copy-block">
+    <label>Ссылка</label>
+    <div class="copy-row">
+      <div class="copy-text">https://khram-aikhal.github.io</div>
+      <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
+    </div>
+  </div>
+  <div class="copy-block">
+    <label>Доска</label>
+    <div class="copy-row">
+      <div class="copy-text">Святая Троица. Открытки к празднику</div>
+      <button class="btn-copy" onclick="copyThis(this, 'Святая Троица. Открытки к празднику')">Копировать</button>
+    </div>
+  </div>
+
+  <div class="section-title">Открытки — нажми 📋 чтобы скопировать URL:</div>
+  <div class="cards-grid" id="grid-troitsa"></div>
 </div>
 
-<div class="copy-block">
-  <label>Ссылка</label>
-  <div class="copy-row">
-    <div class="copy-text">https://khram-aikhal.github.io</div>
-    <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
+<!-- ═══ РОДИТЕЛЬСКАЯ СУББОТА ═══ -->
+<div id="tab-rod" style="display:none;">
+  <div class="section-title">Скопируй для каждого пина:</div>
+
+  <div class="copy-block">
+    <label>Название</label>
+    <div class="copy-row">
+      <div class="copy-text">Троицкая родительская суббота</div>
+      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота')">Копировать</button>
+    </div>
   </div>
+  <div class="copy-block">
+    <label>Описание + хэштеги</label>
+    <div class="copy-row">
+      <div class="copy-text">Троицкая родительская суббота 🕯 Открытка для поминовения усопших — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #троицкаясуббота #родительскаясуббота #православие #поминовение #церковныйпраздник #открытка #православнаяоткрытка</div>
+      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота 🕯 Открытка для поминовения усопших — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #троицкаясуббота #родительскаясуббота #православие #поминовение #церковныйпраздник #открытка #православнаяоткрытка')">Копировать</button>
+    </div>
+  </div>
+  <div class="copy-block">
+    <label>Ссылка</label>
+    <div class="copy-row">
+      <div class="copy-text">https://khram-aikhal.github.io</div>
+      <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
+    </div>
+  </div>
+  <div class="copy-block">
+    <label>Доска</label>
+    <div class="copy-row">
+      <div class="copy-text">Троицкая родительская суббота. Открытки</div>
+      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота. Открытки')">Копировать</button>
+    </div>
+  </div>
+
+  <div class="section-title">Открытки — нажми 📋 чтобы скопировать URL:</div>
+  <div class="cards-grid" id="grid-rod"></div>
 </div>
-
-<div class="section-title">Открытки — кнопка копирует URL:</div>
-
-<div class="cards-grid" id="grid"></div>
 
 <script>
-const BASE = 'https://khram-aikhal.github.io/cards/troitsa/';
-const cards = [
+function switchTab(tab) {
+  document.getElementById('tab-troitsa').style.display = tab === 'troitsa' ? '' : 'none';
+  document.getElementById('tab-rod').style.display = tab === 'rod' ? '' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'troitsa') || (i === 1 && tab === 'rod'));
+  });
+}
+
+function buildGrid(gridId, base, names) {
+  const grid = document.getElementById(gridId);
+  names.forEach((name, i) => {
+    const url = base + name;
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.id = gridId + '-' + i;
+    div.innerHTML = `
+      <img src="${url}" loading="lazy" alt="Открытка ${i+1}">
+      <div class="card-footer">
+        <span class="card-num">#${i+1}</span>
+        <button class="btn-card-copy" onclick="copyCard(this,'${url}','${gridId}',${i})">📋 URL</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+buildGrid('grid-troitsa', 'https://khram-aikhal.github.io/cards/troitsa/', [
   'troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg',
   'troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg',
   'troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg',
   'troitsa-13.jpg','troitsa-14.jpg','troitsa-15.jpg','troitsa-16.jpg',
   'troitsa-17.jpg','troitsa-18.jpg'
-];
+]);
 
-const grid = document.getElementById('grid');
-cards.forEach((name, i) => {
-  const url = BASE + name;
-  const div = document.createElement('div');
-  div.className = 'card';
-  div.id = 'card-' + i;
-  div.innerHTML = `
-    <img src="${url}" loading="lazy" alt="Открытка ${i+1}">
-    <div class="card-footer">
-      <span class="card-num">#${i+1}</span>
-      <button class="btn-card-copy" onclick="copyCard(this, '${url}', ${i})">📋 URL</button>
-    </div>
-  `;
-  grid.appendChild(div);
-});
+buildGrid('grid-rod', 'https://khram-aikhal.github.io/cards/troitsa-rod/', [
+  'troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg',
+  'troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg',
+  'troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg',
+  'troitsa-13.jpg','troitsa-14.jpg'
+]);
 
 function copyThis(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
     btn.textContent = '✓ Скопировано';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Копировать';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
   });
 }
 
-function copyCard(btn, url, idx) {
+function copyCard(btn, url, gridId, idx) {
   navigator.clipboard.writeText(url).then(() => {
     btn.textContent = '✓ Скопировано';
     btn.classList.add('copied');
-    // Помечаем карточку как готовую
     setTimeout(() => {
       btn.textContent = '✓ Готово';
-      document.getElementById('card-' + idx).style.opacity = '0.4';
+      document.getElementById(gridId + '-' + idx).style.opacity = '0.4';
     }, 1500);
   });
 }
