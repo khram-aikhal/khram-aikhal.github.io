@@ -7,20 +7,14 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
-    h1 { font-size: 22px; margin-bottom: 6px; color: #e60023; }
-    .subtitle { color: #666; font-size: 14px; margin-bottom: 24px; }
+    h1 { font-size: 22px; margin-bottom: 16px; color: #e60023; }
 
     .copy-block {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      background: #fff; border-radius: 12px; padding: 16px 20px;
+      margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
-    .copy-block label { font-size: 13px; color: #999; display: block; margin-bottom: 6px; }
-    .copy-row {
-      display: flex; gap: 10px; align-items: center;
-    }
+    .copy-block label { font-size: 12px; color: #999; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .copy-row { display: flex; gap: 10px; align-items: center; }
     .copy-text {
       flex: 1; font-size: 14px; background: #f8f8f8;
       border: 1px solid #ddd; border-radius: 8px;
@@ -29,192 +23,212 @@
     .btn-copy {
       background: #e60023; color: #fff; border: none;
       border-radius: 8px; padding: 10px 16px;
-      font-size: 14px; cursor: pointer; white-space: nowrap;
-      transition: background 0.2s;
+      font-size: 14px; cursor: pointer; white-space: nowrap; transition: background 0.2s;
     }
     .btn-copy:hover { background: #c0001d; }
     .btn-copy.copied { background: #2a9d2a; }
 
     .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 32px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px; margin-top: 24px;
     }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    }
+    .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
     .card img { width: 100%; display: block; }
-    .card-footer {
-      padding: 10px 12px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 8px;
-    }
-    .card-num { font-size: 13px; color: #999; }
+    .card-footer { padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .card-num { font-size: 12px; color: #999; }
     .btn-card-copy {
       background: #e60023; color: #fff; border: none;
-      border-radius: 6px; padding: 6px 12px;
-      font-size: 13px; cursor: pointer; transition: background 0.2s;
+      border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer;
     }
-    .btn-card-copy:hover { background: #c0001d; }
     .btn-card-copy.copied { background: #2a9d2a; }
 
     .pinterest-link {
-      display: inline-block;
-      background: #e60023;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      padding: 12px 24px;
-      font-size: 15px;
-      margin-bottom: 24px;
+      display: inline-block; background: #e60023; color: #fff;
+      text-decoration: none; border-radius: 8px; padding: 12px 24px;
+      font-size: 15px; margin-bottom: 20px;
     }
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 28px 0 14px;
-      color: #222;
-    }
-    .done { text-decoration: line-through; opacity: 0.4; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 24px 0 12px; color: #222; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
     .tab-btn {
-      padding: 10px 18px; border: 2px solid #e60023; border-radius: 8px;
-      background: #fff; color: #e60023; font-size: 14px; cursor: pointer;
-      transition: all 0.2s;
+      padding: 8px 14px; border: 2px solid #e60023; border-radius: 8px;
+      background: #fff; color: #e60023; font-size: 13px; cursor: pointer; transition: all 0.2s;
     }
     .tab-btn.active { background: #e60023; color: #fff; }
+
+    .no-files {
+      background: #fff8e1; border: 1px solid #ffd54f; border-radius: 10px;
+      padding: 16px 20px; color: #795548; font-size: 14px; margin-top: 16px;
+    }
+    .no-files code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
   </style>
 </head>
 <body>
 
 <h1>📌 Загрузка открыток на Pinterest</h1>
 
-<a class="pinterest-link" href="https://ru.pinterest.com/pin-builder/" target="_blank">
-  ➕ Открыть создание пина
-</a>
+<a class="pinterest-link" href="https://ru.pinterest.com/pin-builder/" target="_blank">➕ Открыть создание пина</a>
 
-<!-- ТАБЫ -->
-<div style="display:flex;gap:10px;margin-bottom:24px;">
-  <button class="tab-btn active" onclick="switchTab('troitsa')">🌿 Святая Троица (18)</button>
-  <button class="tab-btn" onclick="switchTab('rod')">🕯 Родительская суббота (14)</button>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('troitsa')">🌿 Троица (18)</button>
+  <button class="tab-btn" onclick="switchTab('rod')">🕯 Родит. суббота (14)</button>
+  <button class="tab-btn" onclick="switchTab('pasha')">🥚 Пасха</button>
+  <button class="tab-btn" onclick="switchTab('preobrazenie')">🍎 Преображение</button>
+  <button class="tab-btn" onclick="switchTab('uspeniye')">🌸 Успение</button>
+  <button class="tab-btn" onclick="switchTab('petra-pavla')">⚓ Петра и Павла</button>
 </div>
 
-<!-- ═══ ТРОИЦА ═══ -->
-<div id="tab-troitsa">
-  <div class="section-title">Скопируй для каждого пина:</div>
-
-  <div class="copy-block">
-    <label>Название</label>
-    <div class="copy-row">
-      <div class="copy-text">С праздником Святой Троицы!</div>
-      <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы!')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Описание + хэштеги</label>
-    <div class="copy-row">
-      <div class="copy-text">С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником</div>
-      <button class="btn-copy" onclick="copyThis(this, 'С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Ссылка</label>
-    <div class="copy-row">
-      <div class="copy-text">https://khram-aikhal.github.io</div>
-      <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Доска</label>
-    <div class="copy-row">
-      <div class="copy-text">Святая Троица. Открытки к празднику</div>
-      <button class="btn-copy" onclick="copyThis(this, 'Святая Троица. Открытки к празднику')">Копировать</button>
-    </div>
-  </div>
-
-  <div class="section-title">Открытки — нажми 📋 чтобы скопировать URL:</div>
-  <div class="cards-grid" id="grid-troitsa"></div>
-</div>
-
-<!-- ═══ РОДИТЕЛЬСКАЯ СУББОТА ═══ -->
-<div id="tab-rod" style="display:none;">
-  <div class="section-title">Скопируй для каждого пина:</div>
-
-  <div class="copy-block">
-    <label>Название</label>
-    <div class="copy-row">
-      <div class="copy-text">Троицкая родительская суббота</div>
-      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Описание + хэштеги</label>
-    <div class="copy-row">
-      <div class="copy-text">Троицкая родительская суббота 🕯 Открытка для поминовения усопших — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #троицкаясуббота #родительскаясуббота #православие #поминовение #церковныйпраздник #открытка #православнаяоткрытка</div>
-      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота 🕯 Открытка для поминовения усопших — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #троицкаясуббота #родительскаясуббота #православие #поминовение #церковныйпраздник #открытка #православнаяоткрытка')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Ссылка</label>
-    <div class="copy-row">
-      <div class="copy-text">https://khram-aikhal.github.io</div>
-      <button class="btn-copy" onclick="copyThis(this, 'https://khram-aikhal.github.io')">Копировать</button>
-    </div>
-  </div>
-  <div class="copy-block">
-    <label>Доска</label>
-    <div class="copy-row">
-      <div class="copy-text">Троицкая родительская суббота. Открытки</div>
-      <button class="btn-copy" onclick="copyThis(this, 'Троицкая родительская суббота. Открытки')">Копировать</button>
-    </div>
-  </div>
-
-  <div class="section-title">Открытки — нажми 📋 чтобы скопировать URL:</div>
-  <div class="cards-grid" id="grid-rod"></div>
-</div>
+<div id="tabs-content"></div>
 
 <script>
-function switchTab(tab) {
-  document.getElementById('tab-troitsa').style.display = tab === 'troitsa' ? '' : 'none';
-  document.getElementById('tab-rod').style.display = tab === 'rod' ? '' : 'none';
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'troitsa') || (i === 1 && tab === 'rod'));
-  });
+const SITE = 'https://khram-aikhal.github.io';
+
+const HOLIDAYS = {
+  'troitsa': {
+    label: '🌿 Святая Троица',
+    board: 'Святая Троица. Открытки к празднику',
+    title: 'С праздником Святой Троицы!',
+    desc: 'С праздником Святой Троицы! 🌿 Красивая открытка к Пятидесятнице — поделитесь с родными. Скачать бесплатно 👉 https://khram-aikhal.github.io #троица #святаятроица #пятидесятница #православие #церковныйпраздник #открытка #православнаяоткрытка #с_праздником',
+    base: SITE + '/cards/troitsa/',
+    files: ['troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg','troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg','troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg','troitsa-13.jpg','troitsa-14.jpg','troitsa-15.jpg','troitsa-16.jpg','troitsa-17.jpg','troitsa-18.jpg'],
+  },
+  'rod': {
+    label: '🕯 Родительская суббота',
+    board: 'Троицкая родительская суббота. Открытки',
+    title: 'Троицкая родительская суббота',
+    desc: 'Троицкая родительская суббота 🕯 Открытка для поминовения усопших — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #троицкаясуббота #родительскаясуббота #православие #поминовение #церковныйпраздник #открытка #православнаяоткрытка',
+    base: SITE + '/cards/troitsa-rod/',
+    files: ['troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg','troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg','troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg','troitsa-13.jpg','troitsa-14.jpg'],
+  },
+  'pasha': {
+    label: '🥚 Пасха Христова',
+    board: 'Пасха Христова. Открытки',
+    title: 'Христос Воскресе! С Пасхой!',
+    desc: 'Христос Воскресе! Воистину Воскресе! 🌸 Светлая пасхальная открытка — поделитесь радостью с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #пасха #христосвоскресе #светлаяпасха #православие #церковныйпраздник #открытка #пасхальнаяоткрытка #воскресение',
+    base: SITE + '/cards/pasha/',
+    files: null,
+  },
+  'preobrazenie': {
+    label: '🍎 Преображение Господне',
+    board: 'Преображение Господне. Открытки',
+    title: 'С Преображением Господним!',
+    desc: 'С праздником Преображения Господня! 🍎 Яблочный Спас — открытка для близких. Скачать бесплатно 👉 https://khram-aikhal.github.io #преображение #преображениегосподне #яблочныйспас #православие #церковныйпраздник #открытка #православнаяоткрытка',
+    base: SITE + '/cards/preobrazenie/',
+    files: null,
+  },
+  'uspeniye': {
+    label: '🌸 Успение Богородицы',
+    board: 'Успение Пресвятой Богородицы. Открытки',
+    title: 'С Успением Пресвятой Богородицы!',
+    desc: 'С праздником Успения Пресвятой Богородицы! 🌸 Открытка к великому празднику — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #успение #успениебогородицы #православие #церковныйпраздник #открытка #богородица #православнаяоткрытка',
+    base: SITE + '/cards/uspeniye/',
+    files: null,
+  },
+  'petra-pavla': {
+    label: '⚓ Петра и Павла',
+    board: 'День святых апостолов Петра и Павла. Открытки',
+    title: 'С днём апостолов Петра и Павла!',
+    desc: 'С праздником святых апостолов Петра и Павла! ⚓ Красивая открытка к июльскому празднику — поделитесь с близкими. Скачать бесплатно 👉 https://khram-aikhal.github.io #петраипавла #петрипавел #православие #церковныйпраздник #открытка #православнаяоткрытка #12июля',
+    base: SITE + '/cards/petra-pavla/',
+    files: null,
+  },
+};
+
+const NEED_UPLOAD = ['pasha','preobrazenie','uspeniye','petra-pavla'];
+
+function makeTabContent(key) {
+  const h = HOLIDAYS[key];
+  const needUpload = NEED_UPLOAD.includes(key) && h.files === null;
+
+  let html = `
+    <div class="section-title">Скопируй для каждого пина:</div>
+    <div class="copy-block">
+      <label>Название</label>
+      <div class="copy-row">
+        <div class="copy-text">${h.title}</div>
+        <button class="btn-copy" onclick="copyThis(this,\`${h.title}\`)">Копировать</button>
+      </div>
+    </div>
+    <div class="copy-block">
+      <label>Описание + хэштеги</label>
+      <div class="copy-row">
+        <div class="copy-text">${h.desc}</div>
+        <button class="btn-copy" onclick="copyThis(this,\`${h.desc}\`)">Копировать</button>
+      </div>
+    </div>
+    <div class="copy-block">
+      <label>Ссылка</label>
+      <div class="copy-row">
+        <div class="copy-text">${SITE}</div>
+        <button class="btn-copy" onclick="copyThis(this,'${SITE}')">Копировать</button>
+      </div>
+    </div>
+    <div class="copy-block">
+      <label>Название доски</label>
+      <div class="copy-row">
+        <div class="copy-text">${h.board}</div>
+        <button class="btn-copy" onclick="copyThis(this,\`${h.board}\`)">Копировать</button>
+      </div>
+    </div>`;
+
+  if (needUpload) {
+    html += `
+    <div class="no-files">
+      ⚠️ Открытки ещё не загружены на сервер.<br><br>
+      Скопируй папку <code>${key}</code> на сервер в:<br>
+      <code>/home/agent/khram-site/cards/${key}/</code><br><br>
+      После этого они появятся здесь автоматически.
+    </div>`;
+  } else {
+    html += `<div class="section-title">Открытки — нажми 📋 чтобы скопировать URL:</div>
+    <div class="cards-grid" id="grid-${key}"></div>`;
+  }
+
+  return html;
 }
 
-function buildGrid(gridId, base, names) {
-  const grid = document.getElementById(gridId);
-  names.forEach((name, i) => {
-    const url = base + name;
+// Создаём контент для всех табов
+const content = document.getElementById('tabs-content');
+Object.keys(HOLIDAYS).forEach((key, i) => {
+  const div = document.createElement('div');
+  div.id = 'tab-' + key;
+  div.style.display = i === 0 ? '' : 'none';
+  div.innerHTML = makeTabContent(key);
+  content.appendChild(div);
+});
+
+// Строим сетки для праздников с файлами
+function buildGrid(key) {
+  const h = HOLIDAYS[key];
+  if (!h.files) return;
+  const grid = document.getElementById('grid-' + key);
+  if (!grid) return;
+  h.files.forEach((name, i) => {
+    const url = h.base + name;
     const div = document.createElement('div');
     div.className = 'card';
-    div.id = gridId + '-' + i;
+    div.id = `grid-${key}-${i}`;
     div.innerHTML = `
       <img src="${url}" loading="lazy" alt="Открытка ${i+1}">
       <div class="card-footer">
         <span class="card-num">#${i+1}</span>
-        <button class="btn-card-copy" onclick="copyCard(this,'${url}','${gridId}',${i})">📋 URL</button>
+        <button class="btn-card-copy" onclick="copyCard(this,'${url}','${key}',${i})">📋 URL</button>
       </div>`;
     grid.appendChild(div);
   });
 }
 
-buildGrid('grid-troitsa', 'https://khram-aikhal.github.io/cards/troitsa/', [
-  'troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg',
-  'troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg',
-  'troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg',
-  'troitsa-13.jpg','troitsa-14.jpg','troitsa-15.jpg','troitsa-16.jpg',
-  'troitsa-17.jpg','troitsa-18.jpg'
-]);
+buildGrid('troitsa');
+buildGrid('rod');
 
-buildGrid('grid-rod', 'https://khram-aikhal.github.io/cards/troitsa-rod/', [
-  'troitsa-01.jpg','troitsa-02.jpg','troitsa-03.jpg','troitsa-04.jpg',
-  'troitsa-05.jpg','troitsa-06.jpg','troitsa-07.jpg','troitsa-08.jpg',
-  'troitsa-09.jpg','troitsa-10.jpg','troitsa-11.jpg','troitsa-12.jpg',
-  'troitsa-13.jpg','troitsa-14.jpg'
-]);
+function switchTab(key) {
+  Object.keys(HOLIDAYS).forEach(k => {
+    document.getElementById('tab-' + k).style.display = k === key ? '' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', Object.keys(HOLIDAYS)[i] === key);
+  });
+}
 
 function copyThis(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
@@ -225,17 +239,13 @@ function copyThis(btn, text) {
   });
 }
 
-function copyCard(btn, url, gridId, idx) {
+function copyCard(btn, url, key, idx) {
   navigator.clipboard.writeText(url).then(() => {
-    btn.textContent = '✓ Скопировано';
+    btn.textContent = '✓ Готово';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = '✓ Готово';
-      document.getElementById(gridId + '-' + idx).style.opacity = '0.4';
-    }, 1500);
+    document.getElementById(`grid-${key}-${idx}`).style.opacity = '0.4';
   });
 }
 </script>
-
 </body>
 </html>
