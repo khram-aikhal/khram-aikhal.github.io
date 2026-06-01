@@ -128,6 +128,7 @@ async function load() {
 
     const block = document.createElement('div');
     block.className = 'feast-block';
+    block.id = feast.key;
     block.innerHTML = `
       <div class="feast-title">
         ${feast.emoji} ${feast.name}
