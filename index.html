@@ -2502,8 +2502,9 @@
             { key:'voznesenie',    name:'Вознесение Господне',             emoji:'✦', date:add(e,39),     showBefore:7 },
             { key:'troitsa-rod',   name:'Троицкая родительская суббота',   emoji:'🌿', date:add(e,48),     showBefore:2 },
             { key:'troitsa',       name:'Святая Троица',                   emoji:'🌿', date:add(e,49),     showBefore:7 },
-            { key:'petra-pavla',   name:'Апостолов Петра и Павла',         emoji:'⚓', date:D(7,12),       showBefore:7 },
+            { key:'den-detey',     name:'С Днём детей!',                   emoji:'🌸', date:D(6,1),        showBefore:7 },
             { key:'ioanna',        name:'Рождество Иоанна Предтечи',       emoji:'✝️', date:D(7,7),        showBefore:7 },
+            { key:'petra-pavla',   name:'Апостолов Петра и Павла',         emoji:'⚓', date:D(7,12),       showBefore:7 },
             { key:'preobrazhenie', name:'Преображение Господне',           emoji:'✨', date:D(8,19),       showBefore:7 },
             { key:'uspenie',       name:'Успение Богородицы',              emoji:'🌸', date:D(8,28),       showBefore:7 },
             { key:'rozhd-bog',     name:'Рождество Богородицы',            emoji:'🌸', date:D(9,21),       showBefore:7 },
@@ -2512,22 +2513,30 @@
         ];
     }
 
-    // Возвращает все праздники которые сейчас "активны" (надо показывать)
+    // Возвращает праздники для показа: текущие активные или ближайший следующий
     function getActiveFeastList() {
         const today = new Date(); today.setHours(0,0,0,0);
         const todayMs = today.getTime();
         const DAY = 86400000;
-        const SHOW_AFTER = 1; // 1 день после праздника
 
         const yr = today.getFullYear();
         const all = [...getFeastList(yr), ...getFeastList(yr + 1)];
 
-        return all.filter(f => {
+        // Активные: от showBefore дней до праздника включительно в сам день
+        const active = all.filter(f => {
             const fMs = f.date.getTime();
             const windowStart = fMs - f.showBefore * DAY;
-            const windowEnd   = fMs + SHOW_AFTER * DAY;
-            return todayMs >= windowStart && todayMs <= windowEnd;
+            return todayMs >= windowStart && todayMs <= fMs;
         }).sort((a, b) => a.date - b.date);
+
+        if (active.length) return active;
+
+        // Нет текущего праздника — показать ближайший предстоящий
+        const next = all
+            .filter(f => f.date.getTime() > todayMs)
+            .sort((a, b) => a.date - b.date)[0];
+
+        return next ? [{ ...next, isNext: true }] : [];
     }
 
     let currentCardUrl = '';
@@ -2558,12 +2567,13 @@
             const DAY = 86400000;
             const diff = Math.round((feast.date.getTime() - today.getTime()) / DAY);
 
+            const dateStr = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
             let dateLabel;
-            if (diff < 0)       dateLabel = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}) + ' — праздник прошёл';
-            else if (diff === 0) dateLabel = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}) + ' — сегодня! 🎉';
-            else if (diff === 1) dateLabel = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}) + ' — завтра';
-            else if (diff <= 7)  dateLabel = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}) + ' — через ' + diff + ' дн.';
-            else                 dateLabel = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+            if (feast.isNext)    dateLabel = dateStr + ' — впереди 🗓';
+            else if (diff === 0) dateLabel = dateStr + ' — сегодня! 🎉';
+            else if (diff === 1) dateLabel = dateStr + ' — завтра';
+            else if (diff <= 7)  dateLabel = dateStr + ' — через ' + diff + ' ' + daysWord(diff);
+            else                 dateLabel = dateStr;
 
             const cards = manifest[feast.key] || [];
 
