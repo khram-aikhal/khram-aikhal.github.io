@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Праздничные открытки — Храм Рождества Христова, Айхал</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #FDF8F0; color: #3B2A1A; }
+
+  .header {
+    background: #5C0A0A; color: #F5D78E; text-align: center;
+    padding: 18px 16px 14px;
+  }
+  .header h1 { font-size: 20px; font-weight: normal; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 13px; color: #C8A04A; margin-top: 4px; }
+  .back-link {
+    display: inline-block; color: #F5D78E; text-decoration: none;
+    font-size: 13px; margin-bottom: 10px; opacity: 0.85;
+  }
+  .back-link:hover { opacity: 1; }
+
+  .content { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .feast-block { margin-bottom: 32px; }
+  .feast-title {
+    font-size: 18px; color: #5C0A0A; font-weight: bold;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .feast-count { font-size: 13px; color: #7A85BB; font-weight: normal; margin-left: auto; }
+
+  .cards-scroll {
+    display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .cards-scroll::-webkit-scrollbar { display: none; }
+
+  .swipe-hint {
+    text-align: center; font-size: 12px; color: #B8956A;
+    margin-top: 6px; opacity: 0.8;
+  }
+
+  .card-thumb {
+    flex-shrink: 0; width: 150px; height: 150px; border-radius: 12px;
+    overflow: hidden; border: 2px solid #C8A04A; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(44,18,8,0.18); background: #EEE;
+    position: relative;
+  }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-save-btn {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.52); color: #fff; border: none;
+    padding: 8px 0; font-size: 12px; cursor: pointer;
+    font-family: Georgia, serif;
+  }
+
+  .divider {
+    border: none; border-top: 1px solid #D4B896; margin: 8px 0 28px;
+  }
+
+  /* Лайтбокс */
+  .lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.88); z-index: 999;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .lightbox img { max-width: 100%; max-height: 70vh; border-radius: 10px; }
+  .lb-btns { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+  .lb-btn {
+    padding: 12px 24px; border: none; border-radius: 10px;
+    font-size: 15px; cursor: pointer; font-family: Georgia, serif;
+  }
+  .lb-save { background: #C8A04A; color: #fff; }
+  .lb-close { background: rgba(255,255,255,0.15); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-link" href="/">← На главную</a>
+  <h1>🎨 Праздничные открытки</h1>
+  <div class="subtitle">Храм Рождества Христова · Айхал · Скачивайте бесплатно</div>
+</div>
+
+<div class="content" id="content">
+  <p style="text-align:center;color:#8B6A3A;padding:30px 0;">Загружаю открытки...</p>
+</div>
+
+<!-- Лайтбокс -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lb-img" src="" alt="" onclick="event.stopPropagation()">
+  <div class="lb-btns" onclick="event.stopPropagation()">
+    <button class="lb-btn lb-save" onclick="downloadCard()">⬇ Сохранить</button>
+    <button class="lb-btn lb-close" onclick="closeLightbox()">✕ Закрыть</button>
+  </div>
+</div>
+
+<script>
+const SITE = 'https://khram-aikhal.github.io';
+
+const FEASTS = [
+  { key: 'troitsa',      name: 'Святая Троица',                emoji: '🌿' },
+  { key: 'troitsa-rod',  name: 'Троицкая родительская суббота',emoji: '🕯' },
+  { key: 'pasha',        name: 'Пасха Христова',               emoji: '🌅' },
+  { key: 'preobrazhenie',name: 'Преображение Господне',        emoji: '✨' },
+  { key: 'uspenie',      name: 'Успение Богородицы',           emoji: '🌸' },
+  { key: 'petra-pavla',  name: 'Апостолы Петра и Павла',       emoji: '⚓' },
+  { key: 'ioanna',       name: 'Рождество Иоанна Предтечи',    emoji: '✝️' },
+];
+
+let currentCardUrl = '';
+
+async function load() {
+  const resp = await fetch(SITE + '/cards/index.json?v=' + Date.now());
+  const manifest = await resp.json();
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+
+  FEASTS.forEach((feast, i) => {
+    const files = manifest[feast.key] || [];
+    if (!files.length) return;
+
+    const n = files.length;
+    const countText = n + (n === 1 ? ' открытка' : n < 5 ? ' открытки' : ' открыток');
+
+    const block = document.createElement('div');
+    block.className = 'feast-block';
+    block.innerHTML = `
+      <div class="feast-title">
+        ${feast.emoji} ${feast.name}
+        <span class="feast-count">${countText}</span>
+      </div>
+      <div class="cards-scroll" id="scroll-${feast.key}"></div>
+      ${n > 3 ? '<div class="swipe-hint">← листай, здесь больше открыток →</div>' : ''}
+    `;
+    if (i < FEASTS.length - 1) {
+      block.innerHTML += '<hr class="divider">';
+    }
+    content.appendChild(block);
+
+    const scroll = document.getElementById('scroll-' + feast.key);
+    files.forEach(fn => {
+      const url = SITE + '/cards/' + feast.key + '/' + fn;
+      const div = document.createElement('div');
+      div.className = 'card-thumb';
+      div.innerHTML = '<img src="' + url + '" loading="lazy" alt="">'
+        + '<button class="card-save-btn" onclick="saveCard(\'' + url + '\',event)">⬇ Сохранить</button>';
+      div.onclick = () => openLightbox(url);
+      scroll.appendChild(div);
+    });
+  });
+}
+
+function openLightbox(url) {
+  currentCardUrl = url;
+  document.getElementById('lb-img').src = url;
+  document.getElementById('lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+  document.getElementById('lb-img').src = '';
+  document.body.style.overflow = '';
+}
+
+async function saveCard(url, event) {
+  event.stopPropagation();
+  try {
+    const r = await fetch(url);
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = url.split('/').pop() || 'card.jpg';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  } catch { window.open(url, '_blank'); }
+}
+
+async function downloadCard() {
+  try {
+    const r = await fetch(currentCardUrl);
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = currentCardUrl.split('/').pop() || 'card.jpg';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  } catch { window.open(currentCardUrl, '_blank'); }
+}
+
+load();
+</script>
+</body>
+</html>
