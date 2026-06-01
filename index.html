@@ -294,6 +294,10 @@
             -webkit-overflow-scrolling:touch; scrollbar-width:none;
         }
         .cards-scroll::-webkit-scrollbar { display:none; }
+        .cards-swipe-hint {
+            text-align:center; font-size:12px; color:#B8956A; margin-top:6px;
+            letter-spacing:0.3px; opacity:0.8;
+        }
         .card-thumb {
             flex-shrink:0; width:150px; height:150px; border-radius:12px;
             overflow:hidden; border:2px solid #C8A04A; cursor:pointer;
@@ -2486,6 +2490,8 @@
             { key:'voznesenie',    name:'Вознесение Господне',             emoji:'✦', date:add(e,39),     showBefore:7 },
             { key:'troitsa-rod',   name:'Троицкая родительская суббота',   emoji:'🌿', date:add(e,48),     showBefore:2 },
             { key:'troitsa',       name:'Святая Троица',                   emoji:'🌿', date:add(e,49),     showBefore:7 },
+            { key:'petra-pavla',   name:'Апостолов Петра и Павла',         emoji:'⚓', date:D(7,12),       showBefore:7 },
+            { key:'ioanna',        name:'Рождество Иоанна Предтечи',       emoji:'✝️', date:D(7,7),        showBefore:7 },
             { key:'preobrazhenie', name:'Преображение Господне',           emoji:'✨', date:D(8,19),       showBefore:7 },
             { key:'uspenie',       name:'Успение Богородицы',              emoji:'🌸', date:D(8,28),       showBefore:7 },
             { key:'rozhd-bog',     name:'Рождество Богородицы',            emoji:'🌸', date:D(9,21),       showBefore:7 },
@@ -2560,6 +2566,7 @@
                     <div class="cards-count" id="count-${feast.key}"></div>
                 </div>
                 <div class="cards-scroll" id="scroll-${feast.key}"></div>
+                <div class="cards-swipe-hint" id="hint-${feast.key}" style="display:none">← листай, здесь больше открыток →</div>
                 <div class="cards-empty" id="empty-${feast.key}" style="display:none">
                     <div style="font-size:32px;margin-bottom:8px">🎨</div>
                     <div style="font-size:14px;color:#8B6A3A;line-height:1.5">Открытки скоро появятся</div>
@@ -2584,6 +2591,8 @@
 
         const n = cards.length;
         count.textContent = n + (n === 1 ? ' открытка' : n < 5 ? ' открытки' : ' открыток');
+        const hint = document.getElementById('hint-' + feastKey);
+        if (hint && n > 3) hint.style.display = 'block';
 
         cards.forEach(fn => {
             const url = 'https://khram-aikhal.github.io/cards/' + feastKey + '/' + fn;
