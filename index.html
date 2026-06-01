@@ -2617,7 +2617,8 @@
         if (hint && n > 3) hint.style.display = 'block';
 
         cards.forEach(fn => {
-            const url = 'https://khram-aikhal.github.io/cards/' + feastKey + '/' + fn;
+            const signedFn = fn.replace(/\.(png|PNG)$/, '.jpg');
+            const url = 'https://khram-aikhal.github.io/cards/' + feastKey + '/signed/' + signedFn;
             const div = document.createElement('div');
             div.className = 'card-thumb';
             div.innerHTML = '<img src="' + url + '" loading="lazy" alt="">'

@@ -144,7 +144,8 @@ async function load() {
 
     const scroll = document.getElementById('scroll-' + feast.key);
     files.forEach(fn => {
-      const url = SITE + '/cards/' + feast.key + '/' + fn;
+      const signedFn = fn.replace(/\.(png|PNG)$/, '.jpg');
+      const url = SITE + '/cards/' + feast.key + '/signed/' + signedFn;
       const div = document.createElement('div');
       div.className = 'card-thumb';
       div.innerHTML = '<img src="' + url + '" loading="lazy" alt="">'
