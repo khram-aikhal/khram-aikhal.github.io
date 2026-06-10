@@ -647,6 +647,7 @@
         <p class="hint">Пишите каждое имя на новой строке.<br>Можно вставить через запятую — сами разберутся по строкам.</p>
         <script>
         document.getElementById('namesInput').addEventListener('input', function() {
+            document.getElementById('save-list-done').style.display = 'none';
             var val = this.value;
             // Если есть запятые или точки с запятой — разбиваем на строки
             if (val.includes(',') || val.includes(';')) {
@@ -661,6 +662,19 @@
             }
         });
         </script>
+
+        <!-- Сохранить список имён -->
+        <div id="save-list-prompt" style="margin-top:16px;margin-bottom:4px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:12px;padding:14px">
+            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px">💾 Сохранить написанные имена для следующего раза?</div>
+            <input type="text" id="save-list-name" placeholder="Название: Родители, За работой…"
+                   style="width:100%;padding:10px;border:1px solid #C8A04A;border-radius:8px;font-family:Georgia,serif;font-size:14px;box-sizing:border-box;margin-bottom:8px;background:#fff">
+            <button onclick="saveCurrentList()" style="width:100%;padding:11px;background:#8B1A1A;color:#F5E6C8;border:none;border-radius:8px;font-family:Georgia,serif;font-size:14px;cursor:pointer">
+                Сохранить список
+            </button>
+            <div id="save-list-done" style="display:none;color:#2E6B2E;font-size:13px;text-align:center;margin-top:8px;font-weight:bold">✅ Список сохранён!</div>
+            <div style="font-size:12px;color:#B09060;text-align:center;margin-top:8px">Можно сохранить до отправки записки и потом использовать список одним нажатием.</div>
+        </div>
+
         <button class="btn-primary" onclick="processNames()">Далее →</button>
         <button class="btn-secondary" onclick="goTo('screen-choose-type')">← Назад</button>
     </div>
@@ -722,17 +736,6 @@
         <div id="quick-types" style="margin-top:20px;margin-bottom:4px">
             <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px;letter-spacing:0.5px">Подать ещё записку:</div>
             <div id="quick-type-buttons" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
-        </div>
-
-        <!-- Сохранить список имён -->
-        <div id="save-list-prompt" style="display:none;margin-top:16px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:12px;padding:14px">
-            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px">💾 Сохранить этот список имён для следующего раза?</div>
-            <input type="text" id="save-list-name" placeholder="Название: Родители, За работой…"
-                   style="width:100%;padding:10px;border:1px solid #C8A04A;border-radius:8px;font-family:Georgia,serif;font-size:14px;box-sizing:border-box;margin-bottom:8px;background:#fff">
-            <button onclick="saveCurrentList()" style="width:100%;padding:11px;background:#8B1A1A;color:#F5E6C8;border:none;border-radius:8px;font-family:Georgia,serif;font-size:14px;cursor:pointer">
-                Сохранить список
-            </button>
-            <div id="save-list-done" style="display:none;color:#2E6B2E;font-size:13px;text-align:center;margin-top:8px;font-weight:bold">✅ Список сохранён!</div>
         </div>
 
         <div style="margin-top:20px;font-size:14px;color:#8B5A2A;text-align:center;margin-bottom:12px">
@@ -2423,7 +2426,6 @@
         submitToBot(currentType, finalNames);
         renderQuickTypes();
         goTo('screen-success');
-        showSaveListPrompt();
     }
 
     function submitNote() {
@@ -2734,18 +2736,11 @@
         renderSavedLists();
     }
 
-    function showSaveListPrompt() {
-        const prompt = document.getElementById('save-list-prompt');
-        prompt.style.display = 'block';
-        document.getElementById('save-list-done').style.display = 'none';
-        document.getElementById('save-list-name').value = '';
-    }
-
     function saveCurrentList() {
         const nameInput = document.getElementById('save-list-name').value.trim();
         if (!nameInput) { document.getElementById('save-list-name').focus(); return; }
         const rawNames = document.getElementById('namesInput').value.trim();
-        if (!rawNames) return;
+        if (!rawNames) { document.getElementById('namesInput').focus(); return; }
         const lists = loadSavedLists();
         const existing = lists.findIndex(l => l.name === nameInput);
         if (existing >= 0) {
@@ -2754,10 +2749,8 @@
             lists.push({ name: nameInput, names: rawNames });
         }
         saveSavedLists(lists);
+        renderSavedLists();
         document.getElementById('save-list-done').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('save-list-prompt').style.display = 'none';
-        }, 2000);
     }
 
     // Прямые ссылки по хэшу: #panikhida, #zdravie, #upokoj и т.д.
