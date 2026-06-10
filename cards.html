@@ -99,16 +99,17 @@
 <script>
 const SITE = 'https://khram-aikhal.github.io';
 
+// Порядок сверху вниз идёт по ближайшему календарю праздников.
 const FEASTS = [
-  { key: 'pravoslavnoe-rossiya', name: 'Православная Россия',           emoji: '🇷🇺' },
-  { key: 'den-detey',    name: 'С Днём детей!',                emoji: '🌸' },
-  { key: 'troitsa',      name: 'Святая Троица',                emoji: '🌿' },
-  { key: 'troitsa-rod',  name: 'Троицкая родительская суббота',emoji: '🕯' },
-  { key: 'pasha',        name: 'Пасха Христова',               emoji: '🌅' },
+  { key: 'pravoslavnoe-rossiya', name: 'Православная Россия',  emoji: '🇷🇺' },
+  { key: 'ioanna',       name: 'Рождество Иоанна Предтечи',    emoji: '✝️' },
+  { key: 'petra-pavla',  name: 'Апостолы Петра и Павла',       emoji: '⚓' },
   { key: 'preobrazhenie',name: 'Преображение Господне',        emoji: '✨' },
   { key: 'uspenie',      name: 'Успение Богородицы',           emoji: '🌸' },
-  { key: 'petra-pavla',  name: 'Апостолы Петра и Павла',       emoji: '⚓' },
-  { key: 'ioanna',       name: 'Рождество Иоанна Предтечи',    emoji: '✝️' },
+  { key: 'den-detey',    name: 'С Днём детей!',                emoji: '🌸' },
+  { key: 'troitsa-rod',  name: 'Троицкая родительская суббота',emoji: '🕯' },
+  { key: 'troitsa',      name: 'Святая Троица',                emoji: '🌿' },
+  { key: 'pasha',        name: 'Пасха Христова',               emoji: '🌅' },
 ];
 
 let currentCardUrl = '';
