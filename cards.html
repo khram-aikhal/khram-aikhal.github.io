@@ -22,7 +22,7 @@
 
   .content { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
-  .feast-block { margin-bottom: 32px; }
+  .feast-block { margin-bottom: 32px; scroll-margin-top: 18px; }
   .feast-title {
     font-size: 18px; color: #5C0A0A; font-weight: bold;
     margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
@@ -114,6 +114,12 @@ const FEASTS = [
 
 let currentCardUrl = '';
 
+const HASH_ALIASES = {
+  'den-rossii': 'pravoslavnoe-rossiya',
+  'pravoslavnye-den-rossii': 'pravoslavnoe-rossiya',
+  'pravoslavnaya-rossiya': 'pravoslavnoe-rossiya',
+};
+
 async function load() {
   const resp = await fetch(SITE + '/cards/index.json?v=' + Date.now());
   const manifest = await resp.json();
@@ -156,7 +162,20 @@ async function load() {
       scroll.appendChild(div);
     });
   });
+
+  scrollToRequestedFeast();
 }
+
+function scrollToRequestedFeast() {
+  if (!window.location.hash) return;
+  const rawHash = decodeURIComponent(window.location.hash.slice(1));
+  const targetId = HASH_ALIASES[rawHash] || rawHash;
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+}
+
+window.addEventListener('hashchange', scrollToRequestedFeast);
 
 function openLightbox(url) {
   currentCardUrl = url;
