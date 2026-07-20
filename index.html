@@ -2434,7 +2434,7 @@
     }
 
     function submitToBot(type, names) {
-        fetch('https://components-expenditure-via-mandate.trycloudflare.com/zapiski', {
+        fetch('https://lounge-symposium-national-plymouth.trycloudflare.com/zapiski', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type, names })
@@ -2468,7 +2468,7 @@
     async function clearNotes() {
         if (!confirm('Вы уверены? Все записки будут удалены после службы.')) return;
         try {
-            const resp = await fetch('https://components-expenditure-via-mandate.trycloudflare.com/clear', { method: 'POST' });
+            const resp = await fetch('https://lounge-symposium-national-plymouth.trycloudflare.com/clear', { method: 'POST' });
             if (resp.ok) {
                 alert('✅ Записки очищены.');
                 document.getElementById('admin-panel').style.display = 'none';
@@ -2649,7 +2649,7 @@
         event.stopPropagation();
         // Считаем скачивание
         const cardName = url.split('/cards/')[1] || url.split('/').pop();
-        fetch('https://components-expenditure-via-mandate.trycloudflare.com/cards/track?card=' + encodeURIComponent(cardName), { method: 'POST' }).catch(() => {});
+        fetch('https://lounge-symposium-national-plymouth.trycloudflare.com/cards/track?card=' + encodeURIComponent(cardName), { method: 'POST' }).catch(() => {});
         try {
             const r = await fetch(url);
             const blob = await r.blob();
