@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сад на песке — памятки Алёны</title>
+<style>
+  :root{--green:#3f5e3a;--green-soft:#6b8e5a;--cream:#f7f3e9;--terra:#b96a4a;
+        --ink:#2e2b26;--line:#d8cdb6;--sand:#e9e0cf}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Georgia,'Times New Roman',serif;background:var(--cream);
+       color:var(--ink);line-height:1.5;padding:24px 18px;
+       min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .wrap{max-width:460px;width:100%;text-align:center}
+  .leaf{font-size:40px}
+  h1{font-size:1.55rem;color:var(--green);margin:8px 0 6px}
+  .sub{font-size:.95rem;color:var(--green-soft);font-style:italic;margin-bottom:26px}
+  a.tile{display:block;text-decoration:none;background:#fff;border:1px solid var(--line);
+     border-left:5px solid var(--terra);border-radius:14px;padding:18px 20px;
+     margin-bottom:16px;text-align:left;box-shadow:0 1px 5px rgba(0,0,0,.05);
+     transition:transform .1s}
+  a.tile:active{transform:scale(.98)}
+  a.tile .ico{font-size:26px}
+  a.tile .t{font-size:1.18rem;color:var(--green);font-weight:bold;margin-top:4px}
+  a.tile .d{font-size:.86rem;color:#6a6357;margin-top:3px}
+  a.tile.g{border-left-color:var(--green-soft)}
+  footer{margin-top:14px;font-size:.8rem;color:#8a8272;font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="leaf">🌿</div>
+  <h1>Сад на песчаной почве</h1>
+  <div class="sub">Что посадить на могилке, чтобы зеленело<br>и не требовало много воды</div>
+
+  <a class="tile" href="mogilka.html">
+    <div class="ico">🗺️</div>
+    <div class="t">Памятка со схемой</div>
+    <div class="d">Куда что сажать · календарь цветения · список покупок · советы для песка</div>
+  </a>
+
+  <a class="tile g" href="rasteniya.html">
+    <div class="ico">🖼️</div>
+    <div class="t">Галерея с фото</div>
+    <div class="d">Как выглядит каждое растение — для солнца и для тени</div>
+  </a>
+
+  <footer>С заботой 🤍</footer>
+</div>
+</body>
+</html>
