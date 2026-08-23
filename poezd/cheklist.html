@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чек-лист еды в поезд · Соловки 7 сентября</title>
+<style>
+  :root{--ink:#20242a;--paper:#f3f6f4;--card:#fff;--line:#e0e5e2;
+        --green:#2f7d55;--green-soft:#e8f3ec;--muted:#7a827d;--accent:#c76a3a}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);
+       color:var(--ink);padding:16px;line-height:1.45}
+  .wrap{max-width:480px;margin:0 auto}
+  header{text-align:center;padding:14px 8px 12px}
+  .ico{font-size:34px}
+  h1{font-size:1.32rem;margin:4px 0}
+  header p{color:var(--muted);font-size:.9rem}
+  .bar{background:#e3e9e5;border-radius:20px;height:12px;overflow:hidden;margin:12px 0 4px}
+  .bar span{display:block;height:100%;width:0;background:var(--green);transition:width .25s}
+  .cnt{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:14px}
+
+  h2{font-size:1rem;color:var(--accent);margin:20px 0 8px;display:flex;align-items:center;gap:7px}
+  .group{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .item{display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer;
+        border-top:1px solid var(--line);user-select:none;transition:background .12s}
+  .item:first-child{border-top:none}
+  .item:active{background:#f0f4f1}
+  .box{width:24px;height:24px;flex:none;border:2px solid #c4ccc6;border-radius:7px;
+       display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;
+       transition:.15s}
+  .item.on .box{background:var(--green);border-color:var(--green)}
+  .item.on .box::after{content:"✓"}
+  .txt{font-size:1rem}
+  .item.on .txt{text-decoration:line-through;color:var(--muted)}
+  .hint{font-size:.8rem;color:var(--muted);display:block;margin-top:2px;text-decoration:none!important}
+
+  .reset{display:block;margin:22px auto 6px;background:none;border:1px solid var(--line);
+          color:var(--muted);padding:9px 18px;border-radius:20px;font-size:.9rem}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:16px;
+          padding-top:14px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="ico">🚂🍎</div>
+    <h1>Еда в поезд — на сутки</h1>
+    <p>Соловки · 7 сентября · пост не идёт, можно всё</p>
+    <div class="bar"><span id="bar"></span></div>
+    <div class="cnt" id="cnt">0 из 0 собрано</div>
+  </header>
+
+  <div id="list"></div>
+
+  <button class="reset" onclick="resetAll()">↺ Снять все галочки</button>
+  <footer>Тыкай по продукту — он отметится. Отметки сохраняются в телефоне 🤍</footer>
+</div>
+
+<script>
+  const DATA = [
+    ["🍗 Первые часы (свежее)", [
+      ["Курица отварная / котлеты в фольге",""],
+      ["Варёные яйца","съесть первыми — пахнут"],
+      ["Бутерброды: сыр, колбаса",""],
+      ["Огурцы, помидоры, перец","соль отдельно"],
+      ["Пирожки, отварная картошка",""],
+    ]],
+    ["🧀 На вечер и утро (лежит без холода)", [
+      ["Сырокопчёная колбаса","лежит лучше варёной"],
+      ["Твёрдый сыр",""],
+      ["Хлебцы, лаваш, галеты",""],
+      ["Орехи, сухофрукты",""],
+      ["Горький шоколад, батончики, печенье, халва",""],
+    ]],
+    ["☕ С кипятком (титан в вагоне)", [
+      ["Овсянка / пюре / суп в стакане",""],
+      ["Чай в пакетиках",""],
+      ["Кофе 3-в-1 или молотый",""],
+    ]],
+    ["🍎 Витамины", [
+      ["Яблоки, груша",""],
+      ["Мандарины, виноград в контейнере",""],
+      ["Банан","съесть первым — мнётся"],
+      ["Морковь палочками",""],
+    ]],
+    ["💧 Питьё — главное!", [
+      ["Вода 1,5–2 литра","в поезде сохнешь"],
+      ["Термос с чаем","по желанию"],
+    ]],
+    ["🎒 Не забыть", [
+      ["Влажные и сухие салфетки",""],
+      ["Мусорные пакеты",""],
+      ["Соль в пакетике",""],
+      ["Складная кружка, ложка-вилка-нож",""],
+      ["Зип-пакеты / контейнер",""],
+      ["Чернослив","для животика 😄"],
+    ]],
+  ];
+
+  const KEY = "cheklist_poezd_solovki";
+  let state = {};
+  try{ state = JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ state={}; }
+
+  const list = document.getElementById('list');
+  let total = 0;
+  DATA.forEach((grp, gi) => {
+    const h = document.createElement('h2'); h.textContent = grp[0]; list.appendChild(h);
+    const box = document.createElement('div'); box.className='group';
+    grp[1].forEach((it, ii) => {
+      total++;
+      const id = gi+"_"+ii;
+      const row = document.createElement('div');
+      row.className = 'item' + (state[id] ? ' on':'');
+      row.innerHTML = '<div class="box"></div><div class="txt">'+it[0]+
+        (it[1] ? '<span class="hint">'+it[1]+'</span>':'')+'</div>';
+      row.onclick = () => { state[id] = !state[id]; row.classList.toggle('on');
+        localStorage.setItem(KEY, JSON.stringify(state)); upd(); };
+      box.appendChild(row);
+    });
+    list.appendChild(box);
+  });
+
+  function upd(){
+    const done = Object.values(state).filter(Boolean).length;
+    document.getElementById('bar').style.width = (total? done/total*100:0)+'%';
+    document.getElementById('cnt').textContent = done+' из '+total+' собрано';
+  }
+  function resetAll(){ state={}; localStorage.removeItem(KEY);
+    document.querySelectorAll('.item').forEach(r=>r.classList.remove('on')); upd(); }
+  upd();
+</script>
+</body>
+</html>
