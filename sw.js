@@ -13,7 +13,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
     if (e.request.method !== 'GET') return;
-    if (e.request.url.includes('trycloudflare.com')) return; // записки — только онлайн
+    if (e.request.url.includes("/zapiski-api/")) return; // записки — только онлайн
 
     // HTML-страницы: всегда сначала сеть (в них зашит URL тоннеля)
     if (e.request.headers.get('accept')?.includes('text/html')) {
