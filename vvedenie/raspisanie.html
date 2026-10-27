@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Расписание служб Свято-Введенского храма · 18–19 августа</title>
+<style>
+  :root{--ink:#1e1a17;--red:#8f1a1a;--paper:#fbf9f4;--line:#d8c7a0;--gold:#a8905e;--muted:#5b544c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'PT Serif',Georgia,'Times New Roman',serif;background:#efe9dc;
+       color:var(--ink);padding:14px;line-height:1.45}
+  .sheet{max-width:440px;margin:0 auto;background:var(--paper);
+         border:3px double var(--gold);border-radius:8px;padding:20px 16px;
+         box-shadow:0 3px 14px rgba(0,0,0,.12)}
+  .cross{text-align:center;font-size:30px;color:#7a5a2a;line-height:1}
+  h1{text-align:center;font-size:1.22rem;letter-spacing:.4px;margin:6px 0 3px;
+     text-transform:uppercase}
+  .dates{text-align:center;color:var(--muted);font-size:.95rem;font-style:italic;
+         margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+
+  .day{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:16px;
+       background:#fff}
+  .day-head{background:#f4ecda;padding:9px 14px;
+            display:flex;align-items:baseline;gap:8px;border-bottom:1px solid var(--line)}
+  .dnum{font-size:1.15rem;font-weight:bold}
+  .dwd{color:var(--red);font-weight:bold;font-size:.95rem}
+  .feast{color:var(--red);font-weight:bold;font-size:1.05rem;padding:12px 14px 4px;line-height:1.3}
+  .feast small{display:block;color:var(--muted);font-weight:normal;font-style:italic;
+               font-size:.83rem;margin-top:5px}
+
+  .serv{display:flex;gap:12px;padding:10px 14px;border-top:1px dashed var(--line)}
+  .serv:first-of-type{border-top:1px solid var(--line);margin-top:8px}
+  .t{flex:none;font-weight:bold;font-size:1.05rem;min-width:52px}
+  .s{font-variant:small-caps;font-size:1rem}
+  .s .add{display:block;font-variant:normal;color:var(--muted);font-size:.85rem;
+          font-style:italic;margin-top:3px}
+
+  footer{text-align:center;margin-top:6px;color:var(--muted);font-size:.9rem;line-height:1.55;
+         padding-top:12px;border-top:1px solid var(--line)}
+  @media print{body{background:#fff}.sheet{box-shadow:none}}
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="cross">☦</div>
+    <h1>Расписание служб<br>Свято-Введенского храма</h1>
+    <div class="dates">18–19 августа 2026</div>
+
+    <div class="day">
+      <div class="day-head"><span class="dnum">18 августа</span><span class="dwd">вторник</span></div>
+      <div class="feast">Предпразднство Преображения Господня
+        <small>мч. Евсигния Антиохийского</small></div>
+      <div class="serv"><span class="t">16:00</span><span class="s">Всенощное бдение. Исповедь.</span></div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="dnum">19 августа</span><span class="dwd">среда</span></div>
+      <div class="feast">Преображение Господа Бога и Спаса нашего Иисуса Христа
+        <small>Один из двунадесятых праздников · Яблочный Спас</small></div>
+      <div class="serv"><span class="t">07:00</span><span class="s">Молебен с акафистом</span></div>
+      <div class="serv"><span class="t">08:15</span><span class="s">Часы. Литургия.
+        <span class="add">Освящение плодов (винограда, яблок)</span></span></div>
+    </div>
+
+    <footer>
+      Настоятель Прихода<br>протоиерей Дмитрий Недумов<br>
+      Тел. +7 (909) 247-12-33
+    </footer>
+  </div>
+</body>
+</html>

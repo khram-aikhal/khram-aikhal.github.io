@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Храм Рождества Христова — Айхал</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2E6B2E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Храм Айхал">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #F7EED8;
+            color: #2C1A0A;
+            min-height: 100vh;
+        }
+
+        /* ── Шапка — тёплый тёмный, как переплёт рукописи ── */
+        .header {
+            background: linear-gradient(160deg, #2C1208 0%, #5C2010 50%, #2C1208 100%);
+            color: #F5E6C8;
+            text-align: center;
+            padding: 28px 16px 16px;
+            border-bottom: 3px solid #C8A04A;
+        }
+        .header .cross { font-size: 38px; margin-bottom: 8px; color: #C8A04A; }
+        .header h1 { font-size: 21px; font-weight: normal; line-height: 1.45; letter-spacing: 0.5px; }
+        .header p { font-size: 15px; color: #C8A04A; margin-top: 6px; font-style: italic; }
+
+        /* ── Фото — снимок на паспарту, вровень с текстовой колонкой ── */
+        .photo-area {
+            max-width: 480px;
+            margin: 16px auto 0;
+            padding: 0 16px;
+        }
+        .photo-frame {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%;        /* 4:3 — высоту держит рамка, не фото */
+            background: #2C1A0A;
+            border-radius: 10px;
+            box-shadow: inset 0 0 0 1px #C8A04A, 0 2px 10px rgba(44,18,8,0.16);
+            overflow: hidden;
+        }
+        /* Фотография сохраняет свои пропорции и свои края — поэтому у неё своя тень */
+        .photo-area img {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto; height: auto;
+            max-width: calc(100% - 36px);
+            max-height: calc(100% - 36px);
+            box-shadow: 0 2px 14px rgba(0,0,0,0.45);
+            opacity: 0; transition: opacity 1.2s ease-in-out;
+        }
+        .photo-area img.active { opacity: 1; }
+        .slide-dots {
+            display: flex; justify-content: center; gap: 14px;
+            margin-top: 12px;
+        }
+        .slide-dot {
+            position: relative;
+            width: 9px; height: 9px; border-radius: 50%;
+            background: rgba(200,160,74,0.35);
+            border: 1px solid rgba(200,160,74,0.8);
+            cursor: pointer; transition: background 0.3s;
+        }
+        .slide-dot::after {             /* широкая зона нажатия — для немолодых рук */
+            content: ''; position: absolute;
+            top: -11px; right: -11px; bottom: -11px; left: -11px;
+        }
+        .slide-dot.active { background: #C8A04A; }
+
+        @media (max-width: 520px) {
+            .photo-area img { max-width: calc(100% - 24px); max-height: calc(100% - 24px); }
+        }
+
+        /* ── Широкий экран: колонка читается как лист на столе ──
+           Тень намеренно не ставится: .photo-area и .main — соседи, и две тени
+           давали шов на стыке. Лист держится разницей тона. */
+        @media (min-width: 900px) {
+            body { background: #E6D7B6; }
+            .main { background: #F7EED8; }
+            .photo-area { background: #F7EED8; padding-top: 18px; margin-top: 0; }
+        }
+
+        .main { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ── Разделитель — золотые линии как в рукописях ── */
+        .divider {
+            text-align: center; color: #C8A04A;
+            font-size: 14px; letter-spacing: 8px;
+            margin: 8px 0 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #C8A04A, transparent);
+        }
+
+        /* ── Информационный блок ── */
+        .info-block {
+            background: #FDF6E3;
+            border: 1px solid #C8A04A;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .info-toggle {
+            width: 100%; padding: 16px 20px;
+            background: none; border: none;
+            font-family: 'Georgia', serif; font-size: 17px;
+            color: #3D1208; text-align: left; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .info-toggle .arrow { font-size: 14px; color: #C8A04A; transition: transform 0.2s; }
+        .info-toggle.open .arrow { transform: rotate(180deg); }
+        .info-content { display: none; padding: 0 20px 16px; background: #FDF6E3; }
+        .info-content.open { display: block; }
+        .info-content p { font-size: 15px; line-height: 1.7; color: #3A2010; margin-bottom: 10px; }
+        .info-content strong { color: #5C1A08; }
+        .info-content ul { padding-left: 18px; }
+        .info-content li { font-size: 15px; line-height: 1.7; color: #3A2010; margin-bottom: 4px; }
+
+        /* ── Главные кнопки — пергамент с золотым обрезом ── */
+        .big-btn {
+            display: block; width: 100%;
+            padding: 20px 20px 20px 24px;
+            margin-bottom: 14px; border: none;
+            border-radius: 10px;
+            font-family: 'Georgia', serif;
+            cursor: pointer; text-align: left;
+            box-shadow: 0 2px 8px rgba(44,18,8,0.12);
+            transition: transform 0.1s, box-shadow 0.1s;
+            border: 1px solid #D4B078;
+        }
+        .big-btn:active { transform: scale(0.98); box-shadow: 0 1px 4px rgba(44,18,8,0.1); }
+        .big-btn .icon { font-size: 34px; display: block; margin-bottom: 8px; }
+        .big-btn .title { font-size: 22px; font-weight: bold; display: block; letter-spacing: 0.3px; }
+        .big-btn .subtitle { font-size: 14px; margin-top: 4px; display: block; opacity: 0.7; font-style: italic; }
+        .btn-zapiski  { background: #FDF6E3; color: #3D1208; border-left: 5px solid #C8A04A; }
+        .btn-schedule { background: #EEF0F8; color: #1A1A5C; border-left: 5px solid #7A85BB; }
+        .btn-donate   { background: #F0F5EE; color: #1A3C1A; border-left: 5px solid #6A8B4A; }
+
+        /* Шаги */
+        .step-indicator { text-align: center; color: #8B5A2A; font-size: 15px; margin-bottom: 20px; }
+        .step-dots { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+        .step-dot { width: 10px; height: 10px; border-radius: 50%; background: #D4B896; }
+        .step-dot.active { background: #8B1A1A; }
+
+        .section-title { font-size: 22px; color: #5C0A0A; margin-bottom: 20px; text-align: center; }
+
+        /* Тип записки */
+        .type-btn {
+            display: block; width: 100%; padding: 22px; margin-bottom: 16px;
+            border: 3px solid transparent; border-radius: 14px;
+            font-family: 'Georgia', serif; font-size: 22px; font-weight: bold;
+            cursor: pointer; text-align: center; transition: all 0.2s;
+        }
+        .type-btn .type-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+        .type-btn .type-desc { font-size: 14px; font-weight: normal; margin-top: 6px; display: block; }
+
+        .type-btn-panikhida { background: #EAE0F5; color: #3A0A5C; border-color: #7A4A9B; }
+        .type-btn-panikhida:hover { background: #7A4A9B; color: #fff; }
+        .type-btn-molebn { background: #E8F4FF; color: #0A2A5C; border-color: #4A7ABB; }
+        .type-btn-molebn:hover { background: #4A7ABB; color: #fff; }
+        .type-section-label {
+            font-size: 13px; color: #8B6A3A; text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 20px 0 12px; text-align: center;
+        }
+        .type-btn-zdravie { background: #E8F5E8; color: #1A5C1A; border-color: #4A8B4A; }
+        .type-btn-zdravie:hover { background: #4A8B4A; color: #fff; }
+        .type-btn-upokoj { background: #EAEBF5; color: #1A1A5C; border-color: #4A4A8B; }
+        .type-btn-upokoj:hover { background: #4A4A8B; color: #fff; }
+        .type-btn-bolash { background: #FFF0E8; color: #7A2800; border-color: #C86040; }
+        .type-btn-bolash:hover { background: #C86040; color: #fff; }
+        .type-btn-putesh { background: #E8F0FF; color: #002A7A; border-color: #4A70BB; }
+        .type-btn-putesh:hover { background: #4A70BB; color: #fff; }
+
+        .btn-donate-sber {
+            display: block; width: 100%; padding: 22px 20px; margin-bottom: 16px;
+            background: linear-gradient(135deg, #21A038, #007A2F);
+            color: #fff; border: none; border-radius: 14px;
+            font-family: 'Georgia', serif; cursor: pointer; text-align: left;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15); transition: transform 0.1s;
+        }
+        .btn-donate-sber:active { transform: scale(0.98); }
+        .btn-donate-sber .icon { font-size: 36px; display: block; margin-bottom: 10px; }
+        .btn-donate-sber .title { font-size: 24px; font-weight: bold; display: block; }
+        .btn-donate-sber .subtitle { font-size: 15px; margin-top: 4px; display: block; opacity: 0.85; }
+
+        /* Экран пожертвований */
+        .donate-method {
+            background: #FFF8EE; border: 1px solid #D4B896; border-radius: 14px;
+            padding: 20px; margin-bottom: 14px;
+        }
+        .donate-method-title {
+            font-size: 18px; font-weight: bold; color: #5C0A0A; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .donate-phone {
+            font-size: 28px; font-weight: bold; color: #1A5C1A;
+            text-align: center; padding: 12px; letter-spacing: 1px;
+            background: #F0F7F0; border-radius: 10px; margin-bottom: 10px;
+        }
+        .donate-details {
+            font-size: 14px; color: #6B4A2A; line-height: 1.7; margin-bottom: 12px;
+        }
+        .btn-copy {
+            display: block; width: 100%; padding: 12px;
+            background: #1A5C1A; color: #fff; border: none; border-radius: 10px;
+            font-family: 'Georgia', serif; font-size: 16px; cursor: pointer;
+        }
+        .btn-copy:active { background: #0F3D0F; }
+        .donate-sbp-soon {
+            text-align: center; padding: 16px; color: #8B6A3A;
+            font-size: 15px; font-style: italic;
+        }
+
+        /* Молитва перед записками */
+        .prayer-block {
+            background: linear-gradient(135deg, #2C1208, #3D1A10);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            text-align: center;
+            border: 1px solid #C8A04A;
+        }
+        .prayer-cross { font-size: 22px; color: #C8A04A; margin-bottom: 8px; }
+        .prayer-text {
+            font-size: 15px; color: #F5E6C8;
+            font-style: italic; line-height: 1.7;
+        }
+
+        /* Ввод имён */
+        textarea {
+            width: 100%; padding: 16px;
+            border: 2px solid #C8A04A; border-radius: 14px;
+            font-family: 'Georgia', serif; font-size: 22px; line-height: 1.9;
+            background: #FFFBF5; color: #3E2010; resize: none; outline: none;
+        }
+        textarea:focus { border-color: #8B1A1A; }
+
+        .hint { font-size: 15px; color: #8B6A3A; margin-top: 10px; margin-bottom: 16px; line-height: 1.5; }
+        .hint-warning { font-size: 14px; color: #8B5A00; background: #FFF8DC; border: 1px solid #C8A04A; border-radius: 8px; padding: 10px 14px; margin-top: 10px; line-height: 1.5; }
+
+        /* Кнопки */
+        .btn-primary {
+            display: block; width: 100%; padding: 20px;
+            background: #8B1A1A; color: #F5E6C8; border: none;
+            border-radius: 14px; font-family: 'Georgia', serif; font-size: 22px;
+            cursor: pointer; margin-top: 16px; transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #6B0A0A; }
+        .btn-secondary {
+            display: block; width: 100%; padding: 16px;
+            background: transparent; color: #8B5A2A;
+            border: 2px solid #C8A04A; border-radius: 14px;
+            font-family: 'Georgia', serif; font-size: 18px; cursor: pointer; margin-top: 12px;
+        }
+
+        /* Результат имён */
+        .names-result { margin-bottom: 16px; }
+        .name-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; margin-bottom: 8px;
+            border-radius: 10px; font-size: 20px;
+        }
+        .name-row.ok  { background: #E8F5E8; border: 1px solid #4A8B4A; }
+        .name-row.warn { background: #FFF8DC; border: 1px solid #C8A04A; }
+        .name-row .status { font-size: 18px; flex-shrink: 0; }
+        .name-row .name-text { flex: 1; }
+        .name-row .name-note { font-size: 13px; color: #8B6A3A; display: block; margin-top: 2px; }
+
+        /* Предпросмотр */
+        .names-preview {
+            background: #FFF8EE; border: 2px solid #C8A04A;
+            border-radius: 14px; padding: 20px; margin-bottom: 16px;
+        }
+        .preview-label { font-size: 13px; color: #8B6A3A; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .preview-type { font-size: 20px; font-weight: bold; color: #5C0A0A; margin-bottom: 12px; }
+        .names-list { font-size: 20px; line-height: 1.9; color: #3E2010; }
+
+        .price-block { text-align: center; margin: 16px 0; }
+        .price-label { font-size: 15px; color: #8B6A3A; margin-bottom: 8px; }
+        .price-note { font-size: 13px; color: #A08060; background: #FFF3CD; padding: 6px 12px; border-radius: 8px; display: inline-block; margin-top: 8px; }
+
+        /* Сумма пожертвования */
+        .amount-input {
+            width: 100%; padding: 20px;
+            border: 2px solid #C8A04A; border-radius: 14px;
+            font-family: 'Georgia', serif; font-size: 28px;
+            text-align: center; background: #FFFBF5;
+            color: #3E2010; outline: none; margin-bottom: 8px;
+        }
+        .amount-input:focus { border-color: #8B1A1A; }
+
+        /* Успех */
+        .success-icon { text-align: center; font-size: 80px; margin: 20px 0 16px; }
+        .success-title { text-align: center; font-size: 28px; color: #1A5C1A; margin-bottom: 16px; }
+        .success-text { text-align: center; font-size: 18px; color: #3E2010; line-height: 1.7; margin-bottom: 24px; }
+
+        .warn-banner {
+            background: #FFF3CD; border: 1px solid #C8A04A; border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 16px; font-size: 15px; color: #8B5A00; line-height: 1.5;
+        }
+
+        /* ── Открытки ── */
+        #cards-section { margin-top: 20px; }
+
+        .feast-block { margin-bottom: 24px; }
+        .feast-block:last-child { margin-bottom: 0; }
+        .cards-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+        .cards-feast { font-size:19px; color:#5C0A0A; font-weight:bold; line-height:1.4; }
+        .cards-date { font-size:13px; color:#8B6A3A; margin-top:3px; }
+        .cards-count { font-size:13px; color:#7A85BB; }
+        .cards-scroll {
+            display:flex; gap:12px; overflow-x:auto; padding-bottom:10px;
+            -webkit-overflow-scrolling:touch; scrollbar-width:none;
+        }
+        .cards-scroll::-webkit-scrollbar { display:none; }
+        .cards-swipe-hint {
+            text-align:center; font-size:12px; color:#B8956A; margin-top:6px;
+            letter-spacing:0.3px; opacity:0.8;
+        }
+        .card-thumb {
+            flex-shrink:0; width:150px; height:150px; border-radius:12px;
+            overflow:hidden; border:2px solid #C8A04A; cursor:pointer;
+            box-shadow:0 2px 8px rgba(44,18,8,0.18); background:#EEE;
+            position:relative;
+        }
+        .card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+        .card-save-btn {
+            position:absolute; bottom:0; left:0; right:0;
+            background:rgba(0,0,0,0.52); color:#fff; border:none;
+            padding:8px 0; font-size:12px; cursor:pointer;
+            font-family:Georgia,serif; letter-spacing:0.3px;
+        }
+        .cards-empty {
+            text-align:center; padding:24px 16px; background:#FDF6E3;
+            border-radius:12px; border:1px dashed #C8A04A;
+        }
+        /* ── Сохранённые списки ── */
+        .saved-list-item {
+            display:flex; align-items:center; gap:8px;
+            background:#FDF6E3; border:1px solid #C8A04A;
+            border-radius:10px; padding:10px 12px; margin-bottom:8px;
+        }
+        .saved-list-name { font-size:14px; color:#3D1208; font-family:Georgia,serif; font-weight:bold; }
+        .saved-list-preview { font-size:12px; color:#8B5A2A; margin-top:2px; }
+        .saved-list-use {
+            padding:8px 13px; background:#8B1A1A; color:#F5E6C8; border:none;
+            border-radius:8px; font-family:Georgia,serif; font-size:13px; cursor:pointer; white-space:nowrap;
+        }
+        .saved-list-del {
+            padding:8px 9px; background:none; border:1px solid #ddd;
+            border-radius:8px; font-size:13px; cursor:pointer; color:#aaa; line-height:1;
+        }
+        /* ── Лайтбокс ── */
+        #lightbox {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.93); z-index:9999;
+            flex-direction:column;
+        }
+        .lb-top { display:flex; justify-content:flex-end; padding:14px 16px; }
+        .lb-close { background:none; border:none; color:#fff; font-size:34px; cursor:pointer; line-height:1; }
+        .lb-img-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:0 12px; }
+        .lb-img-wrap img { max-width:100%; max-height:68vh; border-radius:12px; object-fit:contain; }
+        .lb-actions { display:flex; gap:12px; padding:16px; }
+        .lb-btn {
+            flex:1; padding:18px 10px; border:none; border-radius:14px;
+            font-family:Georgia,serif; font-size:18px; font-weight:bold; cursor:pointer;
+        }
+        .lb-save { background:#C8A04A; color:#2C1208; }
+        .lb-share { background:#2C1208; color:#C8A04A; border:1px solid #C8A04A; }
+        /* ── О храме ── */
+        .about-gallery-scroll {
+            display: flex; gap: 10px;
+            overflow-x: auto; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px; margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .about-gallery-scroll::-webkit-scrollbar { display: none; }
+        .about-gallery-scroll img {
+            flex-shrink: 0; width: 78vw; max-width: 320px; height: 220px;
+            object-fit: cover; border-radius: 12px;
+            border: 2px solid #C8A04A; scroll-snap-align: start;
+        }
+        .gallery-hint {
+            text-align: center; font-size: 12px; color: #B09060;
+            margin: -12px 0 16px; font-style: italic;
+        }
+        .rector-card {
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+            background: #FDF6E3; border: 1px solid #C8A04A;
+            border-radius: 12px; padding: 20px; margin-bottom: 20px;
+            text-align: center;
+        }
+        .rector-photo {
+            width: 160px; height: 160px; border-radius: 50%;
+            background: #E8D9B0; border: 3px solid #C8A04A;
+            overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 72px;
+        }
+        .rector-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .rector-info { flex: 1; }
+        .rector-name { font-size: 17px; font-weight: bold; color: #3D1208; }
+        .rector-title { font-size: 13px; color: #8B6A3A; margin-top: 3px; }
+        .rector-phone { font-size: 14px; color: #5C1A08; margin-top: 6px; }
+        .rector-phone a { color: #5C1A08; text-decoration: none; }
+        .about-title {
+            font-size: 22px; color: #3D1208; text-align: center;
+            margin-bottom: 6px; font-weight: normal;
+        }
+        .about-subtitle {
+            font-size: 14px; color: #C8A04A; text-align: center;
+            font-style: italic; margin-bottom: 20px; letter-spacing: 0.5px;
+        }
+        .about-text {
+            font-size: 15px; line-height: 1.85; color: #3A2010;
+            margin-bottom: 20px;
+        }
+        .about-text p { margin-bottom: 14px; }
+        .about-text strong { color: #5C1A08; }
+        .about-facts {
+            background: #FDF6E3; border: 1px solid #C8A04A;
+            border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
+        }
+        .about-fact {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid #EED99A;
+        }
+        .about-fact:last-child { border-bottom: none; padding-bottom: 0; }
+        .about-fact-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+        .about-fact-body { flex: 1; }
+        .about-fact-label { font-size: 12px; color: #8B6A3A; text-transform: uppercase; letter-spacing: 1px; }
+        .about-fact-value { font-size: 15px; color: #2C1A0A; margin-top: 2px; line-height: 1.5; }
+        .about-fact-value a { color: #5C1A08; text-decoration: none; }
+        .btn-about {
+            display: block; width: 100%; padding: 20px 20px 20px 24px;
+            margin-bottom: 14px; border: 1px solid #D4B078;
+            border-radius: 10px; border-left: 5px solid #8B4A2A;
+            font-family: 'Georgia', serif; cursor: pointer; text-align: left;
+            background: #FEF9F0; color: #3D1208;
+            box-shadow: 0 2px 8px rgba(44,18,8,0.1);
+            transition: transform 0.1s;
+        }
+        .btn-about:active { transform: scale(0.98); }
+        .btn-about .icon { font-size: 34px; display: block; margin-bottom: 8px; }
+        .btn-about .title { font-size: 22px; font-weight: bold; display: block; }
+        .btn-about .subtitle { font-size: 14px; margin-top: 4px; display: block; opacity: 0.7; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="cross">✞</div>
+    <h1>Храм Рождества Христова</h1>
+    <p>посёлок Айхал</p>
+</div>
+
+<div class="photo-area" id="photoArea">
+    <div class="photo-frame">
+        <img src="main1.jpg" alt="Храм Рождества Христова зимой" class="active">
+        <img src="main2.jpg" alt="Крестный ход у храма">
+    </div>
+    <div class="slide-dots">
+        <div class="slide-dot active" onclick="goSlide(0)"></div>
+        <div class="slide-dot" onclick="goSlide(1)"></div>
+    </div>
+</div>
+
+<div class="main">
+
+    <!-- Главный экран -->
+    <div class="screen active" id="screen-home">
+        <div class="divider">✦ ✦ ✦</div>
+
+        <!-- Объявление (автоматическое по праздникам) -->
+        <div id="announce-block" style="display:none;color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center"></div>
+
+        <!-- За кого подают записки -->
+        <div class="info-block">
+            <button class="info-toggle" onclick="toggleInfo(this)">
+                <span>📖 За кого подают записки?</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="info-content">
+                <p><strong>За здравие</strong> подают за живых крещёных православных христиан — о здоровье, помощи Божией и спасении.</p>
+                <p><strong>За упокой</strong> подают за усопших крещёных православных христиан — об упокоении их душ.</p>
+                <p><strong>Важно:</strong></p>
+                <ul>
+                    <li>Имена пишутся только крещёные православные (из святцев)</li>
+                    <li>Пишите полное имя, данное при крещении, а не уменьшительное (Александр, не Саша; Мария, не Маша)</li>
+                    <li>Нельзя подавать за некрещёных, иноверцев и самоубийц</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="big-btn btn-zapiski" onclick="goTo('screen-choose-type')">
+            <span class="icon">📜</span>
+            <span class="title">Подать записку</span>
+            <span class="subtitle">За здравие · за упокой · за болящих · за путешествующих</span>
+        </button>
+
+        <button class="btn-donate-sber" onclick="goTo('screen-donate')">
+            <span class="icon">💳</span>
+            <span class="title">Пожертвование на храм</span>
+            <span class="subtitle">СберБанк · Любой банк · СБП</span>
+        </button>
+
+        <button class="btn-about" onclick="goTo('screen-about')">
+            <span class="icon">⛪</span>
+            <span class="title">О нашем храме</span>
+            <span class="subtitle">История · Настоятель · Контакты</span>
+        </button>
+
+
+        <!-- Расписание богослужений -->
+        <div style="margin-top:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-size:19px;color:#5C0A0A;font-weight:bold">📅 Расписание богослужений</span>
+                <a href="schedule.html" target="_blank" style="font-size:13px;color:#4A5ABB;text-decoration:none">↗ На всю страницу</a>
+            </div>
+            <iframe src="schedule.html"
+                style="width:100%;border:none;border-radius:12px;height:520px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.12)"
+                scrolling="yes">
+            </iframe>
+        </div>
+
+        <!-- Праздничные открытки -->
+        <div id="cards"></div>
+        <div id="cards-section" style="display:none">
+            <div class="divider">✦ ✦ ✦</div>
+            <div style="text-align:center;font-size:18px;color:#8B6A3A;font-family:Georgia,serif;margin-bottom:14px;font-style:italic">🎉 Открытки к празднику для вас</div>
+            <div id="cards-feasts-container"></div>
+            <div style="text-align:center;margin-top:16px;">
+                <a href="/cards.html" style="color:#5C0A0A;font-family:Georgia,serif;font-size:14px;text-decoration:none;border-bottom:1px dotted #C8A04A;padding-bottom:2px;">
+                    Все праздничные открытки →
+                </a>
+            </div>
+        </div>
+
+        <!-- Ссылка на все открытки (всегда видна) -->
+        <div style="text-align:center;margin:24px 0 8px;">
+            <a href="/cards.html" style="display:inline-block;background:#5C0A0A;color:#F5D78E;text-decoration:none;padding:12px 28px;border-radius:10px;font-family:Georgia,serif;font-size:15px;">
+                🎨 Праздничные открытки
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Экран пожертвования -->
+    <div class="screen" id="screen-donate">
+        <div class="section-title">💳 Пожертвование на храм</div>
+        <div class="divider">✦ ✦ ✦</div>
+
+        <!-- 1. СберБанк Онлайн -->
+        <div class="donate-method">
+            <div class="donate-method-title">💚 СберБанк Онлайн</div>
+            <div class="donate-details">Быстрый перевод через приложение Сбера</div>
+            <button class="btn-donate-sber" style="margin-bottom:0"
+                onclick="window.open('https://messenger.online.sberbank.ru/sl/G11bjkOBTlCp7iypZ','_blank')">
+                <span class="icon" style="font-size:26px;margin-bottom:6px">💳</span>
+                <span class="title" style="font-size:18px">Открыть СберБанк Онлайн</span>
+                <span class="subtitle">Перевод в приложении Сбера</span>
+            </button>
+        </div>
+
+        <!-- 2. СБП терминал храма -->
+        <div class="donate-method">
+            <div class="donate-method-title">⚡ СБП — терминал храма</div>
+            <div class="donate-details">Официальный счёт храма · Любой банк · Мгновенно</div>
+            <button class="btn-donate-sber" style="margin-bottom:0;background:linear-gradient(135deg,#1565C0,#0D47A1)"
+                onclick="window.open('https://qr.nspk.ru/AS2A007V3U658PIG9SSBKB25NI6CADPI?type=01&bank=100000000111&crc=b639','_blank')">
+                <span class="icon" style="font-size:26px;margin-bottom:6px">⚡</span>
+                <span class="title" style="font-size:18px">Пожертвовать через СБП</span>
+                <span class="subtitle">Тинькофф, ВТБ, Альфа и любой другой банк</span>
+            </button>
+        </div>
+
+        <!-- 3. Номер телефона батюшки -->
+        <div class="donate-method">
+            <div class="donate-method-title">📞 Перевод по номеру телефона</div>
+            <div class="donate-phone">+7 (924) 460-52-20</div>
+            <div class="donate-details">
+                Получатель: <strong>Иоанн Александрович С.</strong><br>
+                Назначение: <strong>Пожертвование на храм</strong><br>
+                <span style="color:#8B5A2A">Работает через любой банк</span>
+            </div>
+            <button class="btn-copy" onclick="copyDonatePhone()">📋 Скопировать номер</button>
+        </div>
+
+        <button class="btn-secondary" onclick="goTo('screen-home')" style="margin-top:8px">← На главную</button>
+    </div>
+
+    <!-- Выбор типа -->
+    <div class="screen" id="screen-choose-type">
+        <div class="step-indicator">
+            Шаг 1 из 3
+            <div class="step-dots">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+        </div>
+        <div class="section-title">Что подать?</div>
+
+        <div class="type-section-label">📜 Записка (упоминание за богослужением)</div>
+        <button class="type-btn type-btn-zdravie" onclick="selectType('zdravie')">
+            <span class="type-icon">🕊</span>
+            За здравие
+            <span class="type-desc">За живых — о здоровье и благополучии</span>
+        </button>
+        <button class="type-btn type-btn-upokoj" onclick="selectType('upokoj')">
+            <span class="type-icon">✞</span>
+            За упокой
+            <span class="type-desc">За усопших — об упокоении душ</span>
+        </button>
+        <button class="type-btn type-btn-bolash" onclick="selectType('bolash')">
+            <span class="type-icon">🤒</span>
+            О болящих
+            <span class="type-desc">За больных — о скором выздоровлении</span>
+        </button>
+        <button class="type-btn type-btn-putesh" onclick="selectType('putesh')">
+            <span class="type-icon">✈️</span>
+            О путешествующих
+            <span class="type-desc">За тех, кто в дороге</span>
+        </button>
+
+        <div class="type-section-label">🕯 Заказная служба (отдельное богослужение)</div>
+        <button class="type-btn type-btn-panikhida" onclick="selectType('panikhida')">
+            <span class="type-icon">🕯</span>
+            Панихида
+            <span class="type-desc">Поминальная служба по усопшим</span>
+        </button>
+        <button class="type-btn type-btn-molebn" onclick="selectType('molebn')">
+            <span class="type-icon">🙏</span>
+            Молебен
+            <span class="type-desc">Просительная служба — о здравии, в нужде, с благодарением</span>
+        </button>
+
+        <button class="btn-secondary" onclick="goTo('screen-home')">← Назад</button>
+    </div>
+
+    <!-- Ввод имён -->
+    <div class="screen" id="screen-names">
+        <div class="step-indicator">
+            Шаг 2 из 3
+            <div class="step-dots">
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+        </div>
+        <div class="section-title" id="names-title">Введите имена</div>
+
+        <div class="prayer-block">
+            <div class="prayer-cross">✞</div>
+            <div class="prayer-text">«Господи, помяни рабов Твоих и исполни их прошения,<br>яже ко спасению»</div>
+        </div>
+
+        <!-- Сохранённые списки -->
+        <div id="saved-lists-block" style="display:none;margin-bottom:14px">
+            <div style="font-size:13px;color:#8B5A2A;margin-bottom:8px;font-weight:bold">📋 Мои сохранённые списки:</div>
+            <div id="saved-lists-container"></div>
+            <div style="text-align:center;font-size:12px;color:#bbb;margin:8px 0 4px">· · · или введите новые имена · · ·</div>
+        </div>
+
+        <textarea id="namesInput" rows="8"
+            placeholder="Александра&#10;Марии&#10;Николая&#10;Анны"></textarea>
+        <p class="hint">Пишите каждое имя на новой строке.<br>Можно вставить через запятую — сами разберутся по строкам.</p>
+        <script>
+        document.getElementById('namesInput').addEventListener('input', function() {
+            document.getElementById('save-list-done').style.display = 'none';
+            var val = this.value;
+            // Если есть запятые или точки с запятой — разбиваем на строки
+            if (val.includes(',') || val.includes(';')) {
+                var cursorPos = this.selectionStart;
+                var names = val
+                    .split(/[,;]+/)
+                    .map(function(n) { return n.trim(); })
+                    .filter(function(n) { return n.length > 0; });
+                this.value = names.join('\n');
+                // Ставим курсор в конец
+                this.selectionStart = this.selectionEnd = this.value.length;
+            }
+        });
+        </script>
+
+        <!-- Сохранить список имён -->
+        <div id="save-list-prompt" style="margin-top:16px;margin-bottom:4px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:12px;padding:14px">
+            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px">💾 Сохранить написанные имена для следующего раза?</div>
+            <input type="text" id="save-list-name" placeholder="Название: Родители, За работой…"
+                   style="width:100%;padding:10px;border:1px solid #C8A04A;border-radius:8px;font-family:Georgia,serif;font-size:14px;box-sizing:border-box;margin-bottom:8px;background:#fff">
+            <button onclick="saveCurrentList()" style="width:100%;padding:11px;background:#8B1A1A;color:#F5E6C8;border:none;border-radius:8px;font-family:Georgia,serif;font-size:14px;cursor:pointer">
+                Сохранить список
+            </button>
+            <div id="save-list-done" style="display:none;color:#2E6B2E;font-size:13px;text-align:center;margin-top:8px;font-weight:bold">✅ Список сохранён!</div>
+            <div style="font-size:12px;color:#B09060;text-align:center;margin-top:8px">Можно сохранить до отправки записки и потом использовать список одним нажатием.</div>
+        </div>
+
+        <button class="btn-primary" onclick="processNames()">Далее →</button>
+        <button class="btn-secondary" onclick="goTo('screen-choose-type')">← Назад</button>
+    </div>
+
+    <!-- Проверка имён -->
+    <div class="screen" id="screen-check-names">
+        <div class="step-indicator">
+            Шаг 2½ из 3
+            <div class="step-dots">
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+        </div>
+        <div class="section-title">Проверьте имена</div>
+        <div id="warnBanner" class="warn-banner" style="display:none">
+            ⚠ Некоторые имена не найдены в православных святцах. Пожалуйста, уточните православное имя при крещении или исправьте написание.
+        </div>
+        <div class="names-result" id="namesResult"></div>
+        <button class="btn-primary" onclick="confirmNames()">Продолжить →</button>
+        <button class="btn-secondary" onclick="goTo('screen-names')">← Исправить имена</button>
+    </div>
+
+    <!-- Подтверждение -->
+    <div class="screen" id="screen-confirm">
+        <div class="step-indicator">
+            Шаг 3 из 3
+            <div class="step-dots">
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+            </div>
+        </div>
+        <div class="section-title">Проверьте записку</div>
+        <div class="names-preview">
+            <div class="preview-label">Ваша записка</div>
+            <div class="preview-type" id="previewType"></div>
+            <div class="names-list" id="previewNames"></div>
+        </div>
+        <button class="btn-primary" onclick="submitNoteOnly()">Отправить записку →</button>
+        <button class="btn-primary" onclick="submitNote()" style="background:linear-gradient(135deg,#21A038,#007A2F);margin-top:10px">💳 Отправить + Пожертвование</button>
+        <button class="btn-secondary" onclick="goTo('screen-check-names')">← Назад</button>
+    </div>
+
+    <!-- Успех: записка -->
+    <div class="screen" id="screen-success">
+        <div class="success-icon">✝️</div>
+        <div class="success-title">Записка принята!</div>
+        <div class="success-text">
+            Имена будут помянуты на ближайшей службе.
+        </div>
+        <div class="names-preview">
+            <div class="preview-label">Принято</div>
+            <div class="preview-type" id="successType"></div>
+            <div class="names-list" id="successNames"></div>
+        </div>
+
+        <!-- Быстрая подача других категорий -->
+        <div id="quick-types" style="margin-top:20px;margin-bottom:4px">
+            <div style="font-size:13px;color:#8B5A2A;text-align:center;margin-bottom:10px;letter-spacing:0.5px">Подать ещё записку:</div>
+            <div id="quick-type-buttons" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+        </div>
+
+        <div style="margin-top:20px;font-size:14px;color:#8B5A2A;text-align:center;margin-bottom:12px">
+            🙏 Пожертвование на храм — по желанию
+        </div>
+
+        <!-- 1. СберБанк -->
+        <button class="btn-donate-sber" onclick="window.open('https://www.sberbank.ru/ru/choise_bank?requisiteNumber=79244605220&bankCode=100000000111','_blank')" style="margin-bottom:10px">
+            <span class="icon">💚</span>
+            <span class="title">СберБанк Онлайн</span>
+            <span class="subtitle">Карта батюшки · Иоанн Александрович С.</span>
+        </button>
+
+        <!-- 2. СБП терминал -->
+        <button class="btn-donate-sber" onclick="window.open('https://qr.nspk.ru/AS2A007V3U658PIG9SSBKB25NI6CADPI?type=01&bank=100000000111&crc=b639','_blank')" style="margin-bottom:10px;background:linear-gradient(135deg,#1565C0,#0D47A1)">
+            <span class="icon">⚡</span>
+            <span class="title">СБП — терминал храма</span>
+            <span class="subtitle">Любой банк · Официальный счёт</span>
+        </button>
+
+        <!-- 3. Телефон -->
+        <div style="text-align:center;padding:14px;background:#F7EED8;border-radius:12px;border:1px solid #C8A04A;margin-bottom:14px">
+            <div style="font-size:13px;color:#8B5A2A;margin-bottom:4px">📞 Перевод по номеру телефона</div>
+            <div style="font-size:22px;font-weight:bold;color:#5C0A0A;letter-spacing:1px">+7 (924) 460-52-20</div>
+            <div style="font-size:12px;color:#8B5A2A;margin-top:4px">Иоанн Александрович С. · любой банк</div>
+            <button onclick="copyDonatePhone()" style="margin-top:10px;padding:10px 0;background:#5C0A0A;color:#F5E6C8;border:none;border-radius:10px;font-family:Georgia,serif;font-size:14px;cursor:pointer;width:100%">📋 Скопировать номер</button>
+        </div>
+
+        <button class="btn-primary" onclick="goTo('screen-home')" style="margin-top:4px;">На главную</button>
+    </div>
+
+
+    <!-- Скрытая очистка (admin) -->
+    <div id="admin-area" style="margin-top:30px;text-align:center">
+        <span onclick="toggleAdmin()" style="font-size:11px;color:#ddd;cursor:pointer;user-select:none">⚙</span>
+    </div>
+    <div id="admin-panel" style="display:none;margin-top:10px;padding:14px;background:#fff0f0;border:2px solid #e57373;border-radius:10px;text-align:center">
+        <div style="font-size:13px;color:#c62828;margin-bottom:10px;font-weight:bold">⚠️ Зона администратора</div>
+        <button onclick="clearNotes()" style="padding:12px 20px;background:#c62828;color:#fff;border:none;border-radius:8px;font-family:Georgia,serif;font-size:15px;cursor:pointer">
+            🗑 Очистить все записки после службы
+        </button>
+        <div style="font-size:11px;color:#999;margin-top:8px">Потребуется подтверждение</div>
+    </div>
+
+    <!-- Успех: пожертвование -->
+    <div class="screen" id="screen-donate-success">
+        <div class="success-icon">🕯</div>
+        <div class="success-title">Храни вас Господь!</div>
+        <div class="success-text">
+            Пожертвование принято.<br>Спаси вас Бог!
+        </div>
+        <button class="btn-primary" onclick="goTo('screen-home')">На главную</button>
+    </div>
+
+
+    <!-- О храме -->
+    <div class="screen" id="screen-about">
+        <div class="divider">✦ ✦ ✦</div>
+
+        <div class="about-title">✞ Храм Рождества Христова</div>
+        <div class="about-subtitle">посёлок Айхал · Якутия</div>
+
+        <!-- Горизонтальная галерея — листать пальцем → -->
+        <div class="about-gallery-scroll" id="aboutGallery">
+            <img src="h1.jpg" alt="Храм ночью с подсветкой">
+            <img src="h2.jpg" alt="Крест на фоне Северного сияния">
+            <img src="h3.jpg" alt="Храм зимой сквозь деревья">
+            <img src="h4.jpg" alt="Храм в морозном тумане">
+            <img loading="lazy" src="h7.jpg" alt="Храм зимой, луна над куполами">
+            <img loading="lazy" src="h8.jpg" alt="Купола в закатном свете">
+            <img loading="lazy" src="h9.jpg" alt="Храм летом">
+            <img loading="lazy" src="h10.jpg" alt="Храм, грозовое небо">
+            <img loading="lazy" src="h11.jpg" alt="Колокольня, вид на Айхал">
+            <img loading="lazy" src="h12.jpg" alt="Храм зимой, снег">
+            <img loading="lazy" src="h13.jpg" alt="Крёстный ход">
+            <img loading="lazy" src="h14.jpg" alt="Икона Богородицы">
+            <img loading="lazy" src="h15.jpg" alt="Крёстный ход с кадилом">
+            <img loading="lazy" src="h16.jpg" alt="Крёстный ход зимой">
+            <img loading="lazy" src="h17.jpg" alt="Вид на храм сверху">
+            <img loading="lazy" src="h18.jpg" alt="Пасхальная служба">
+            <img loading="lazy" src="h19.jpg" alt="Великопостное богослужение">
+            <img loading="lazy" src="h20.jpg" alt="Визит архиерея">
+            <img loading="lazy" src="h21.jpg" alt="Приход перед храмом">
+            <img loading="lazy" src="h22.jpg" alt="Приход в храме">
+            <img loading="lazy" src="h23.jpg" alt="Певчие при свечах">
+            <img loading="lazy" src="h24.jpg" alt="Богослужение">
+            <img loading="lazy" src="h25.jpg" alt="Великопостная служба">
+            <img loading="lazy" src="h26.jpg" alt="Рождественская служба">
+            <img loading="lazy" src="h27.jpg" alt="Украшение храма к Рождеству">
+            <img loading="lazy" src="h28.jpg" alt="Богородичный праздник">
+            <img loading="lazy" src="h29.jpg" alt="Звонарь">
+            <img loading="lazy" src="h30.jpg" alt="Колокольня изнутри">
+            <img loading="lazy" src="h5.jpg" alt="Свечи в храме">
+            <img loading="lazy" src="h31.jpg" alt="Богослужение, свет из окна">
+            <img loading="lazy" src="h32.jpg" alt="Коленопреклонная молитва">
+            <img loading="lazy" src="h33.jpg" alt="Крещение">
+            <img loading="lazy" src="h34.jpg" alt="Освящение воды на Богоявление">
+            <img loading="lazy" src="h35.jpg" alt="Причастие">
+            <img loading="lazy" src="h36.jpg" alt="Панихида">
+            <img loading="lazy" src="h6.jpg" alt="Семья в храме">
+        </div>
+        <div class="gallery-hint">← листайте фото →</div>
+
+        <!-- Настоятель -->
+        <div class="rector-card">
+            <div class="rector-photo" id="rectorPhoto"><img src="rector.jpg" alt="Иерей Иоанн Серкин"></div>
+            <div class="rector-info">
+                <div class="rector-name">Иерей Иоанн Серкин</div>
+                <div class="rector-title">Настоятель храма</div>
+                <div class="rector-phone"><a href="tel:+79244605220">+7 924 460-52-20</a></div>
+            </div>
+        </div>
+
+        <div class="about-text">
+            <p>Посёлок Айхал — один из алмазных городов Якутии. Само название <strong>«Айхал»</strong> в переводе с якутского означает <em>«слава»</em> — и этот посёлок действительно прославлен богатством недр и трудолюбием своих жителей.</p>
+
+            <p>Православный <strong>храм Рождества Христова</strong> был возведён в начале XXI века при поддержке Акционерной компании <strong>«АЛРОСА»</strong>. Он стоит на центральной площади посёлка — ныне именуемой <strong>Соборной</strong> — и виден из разных уголков Айхала.</p>
+
+            <p>Особая гордость храма — <strong>фарфоровый иконостас</strong>, один из редчайших в России. Золотые купола и колокольня стали неотъемлемой частью облика посёлка — здесь встречают Рождество, Пасху, крестят детей и венчают молодожёнов.</p>
+
+            <p>Приход живёт полноценной церковной жизнью: регулярные богослужения, исповедь и причастие, требы, молебны, панихиды. Двери храма открыты для всех, кто ищет веру, утешение или просто тишину.</p>
+        </div>
+
+        <div class="about-facts">
+            <div class="about-fact">
+                <div class="about-fact-icon">📍</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Адрес</div>
+                    <div class="about-fact-value">Республика Саха (Якутия), Мирнинский район, пос. Айхал, Соборная площадь</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">✝️</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Епархия</div>
+                    <div class="about-fact-value">Якутская и Ленская епархия Русской Православной Церкви</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">👨‍⚕️</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Настоятель</div>
+                    <div class="about-fact-value">Иерей Иоанн Серкин</div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">📞</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Телефон храма</div>
+                    <div class="about-fact-value"><a href="tel:+79244605220">+7 924 460-52-20</a></div>
+                </div>
+            </div>
+            <div class="about-fact">
+                <div class="about-fact-icon">🕯</div>
+                <div class="about-fact-body">
+                    <div class="about-fact-label">Престольный праздник</div>
+                    <div class="about-fact-value">Рождество Христово · 7 января</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-secondary" onclick="goTo('screen-home')">← На главную</button>
+    </div>
+
+    <!-- Лайтбокс -->
+    <div id="lightbox">
+        <div class="lb-top">
+            <button class="lb-close" onclick="closeLightbox()">✕</button>
+        </div>
+        <div class="lb-img-wrap">
+            <img id="lb-img" src="" alt="">
+        </div>
+        <div class="lb-actions">
+            <button class="lb-btn lb-save" onclick="downloadCard()">⬇ Сохранить</button>
+            <button class="lb-btn lb-share" onclick="shareCard()">📤 Поделиться</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentType = '';
+    let finalNames = []; // итоговый список в родительном падеже
+
+
+    function goTo(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0, 0);
+        if (id === 'screen-names') renderSavedLists();
+    }
+
+    function copyDonatePhone() {
+        const phone = '+79244605220';
+        const btn = event.currentTarget || event.target;
+        const origText = btn.textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(phone).then(() => {
+                btn.textContent = '✅ Скопировано!';
+                setTimeout(() => btn.textContent = origText, 2000);
+            }).catch(() => prompt('Скопируйте номер:', phone));
+        } else {
+            prompt('Скопируйте номер:', phone);
+        }
+    }
+
+    function toggleInfo(btn) {
+        btn.classList.toggle('open');
+        btn.nextElementSibling.classList.toggle('open');
+    }
+
+    const TYPE_LABELS = {
+        zdravie:   '🕊 За здравие',
+        upokoj:    '✞ За упокой',
+        bolash:    '🤒 О болящих',
+        putesh:    '✈️ О путешествующих',
+        panikhida: '🕯 Панихида',
+        molebn:    '🙏 Молебен',
+    };
+
+    function selectType(type) {
+        currentType = type;
+        document.getElementById('names-title').textContent = (TYPE_LABELS[type] || type) + ' — имена';
+        document.getElementById('namesInput').value = '';
+        goTo('screen-names');
+    }
+
+    const ALL_TYPES = [
+        { id: 'zdravie',   label: '🙏 О здравии' },
+        { id: 'upokoj',    label: '✝️ Об упокоении' },
+        { id: 'bolash',    label: '🤒 О болящих' },
+        { id: 'putesh',    label: '✈️ О путешествующих' },
+        { id: 'panikhida', label: '🕯 Панихида' },
+        { id: 'molebn',    label: '🙏 Молебен' },
+    ];
+
+    function renderQuickTypes() {
+        const container = document.getElementById('quick-type-buttons');
+        container.innerHTML = '';
+        ALL_TYPES.filter(t => t.id !== currentType).forEach(t => {
+            const btn = document.createElement('button');
+            btn.textContent = t.label;
+            btn.style.cssText = 'padding:10px 14px;background:#FDF6E3;border:1px solid #C8A04A;border-radius:20px;font-family:Georgia,serif;font-size:14px;color:#3D1208;cursor:pointer;white-space:nowrap';
+            btn.onclick = () => selectType(t.id);
+            container.appendChild(btn);
+        });
+    }
+
+    // ─── Проверка имён: запрос к API, без ответа — простой режим ───────────
+    // Словаря имён на этой странице нет. Имена спрашиваем у нашего сервера;
+    // если он молчит (~3 с), записка всё равно уходит: имена как написаны.
+    const NAMES_API = 'https://svetopis.art/degunino-api';
+    const NAMES_TIMEOUT_MS = 3000;
+    let namesApiDownUntil = 0; // после молчания сервера 2 минуты не ждём его снова
+
+    function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function cap(s) {
+        s = String(s).trim();
+        return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+    }
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    // Возвращает массив ответов по именам или null, если сервер не ответил.
+    // Пачки по 40 идут параллельно под одним общим сроком 3 с.
+    // 429 (лимит): одна повторная попытка через секунду, потом простой режим
+    // только для этого запроса. Умный режим выключаем на 2 минуты лишь при
+    // сетевой ошибке или таймауте.
+    async function askNames(list) {
+        if (Date.now() < namesApiDownUntil) return null;
+        const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        let timedOut = false, netFail = false, timer;
+        const one = async part => {
+            for (let k = 0; k < 2; k++) {
+                let r;
+                try {
+                    r = await fetch(NAMES_API + '/imena', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imena: part }),
+                        signal: ctrl ? ctrl.signal : undefined
+                    });
+                } catch (e) { if (!timedOut) netFail = true; return null; }
+                if (r.status === 429 && k === 0) { await sleep(1000); continue; }
+                if (!r.ok) return null;
+                try {
+                    const j = await r.json();
+                    return Array.isArray(j) && j.length === part.length ? j : null;
+                } catch (e) { return null; }
+            }
+            return null;
+        };
+        const deadline = new Promise(res => {
+            timer = setTimeout(() => { timedOut = true; if (ctrl) { try { ctrl.abort(); } catch (e) {} } res(null); }, NAMES_TIMEOUT_MS);
+        });
+        const parts = [];
+        for (let i = 0; i < list.length; i += 40) parts.push(list.slice(i, i + 40));
+        const out = await Promise.race([Promise.all(parts.map(one)), deadline]);
+        clearTimeout(timer);
+        if (timedOut || netFail) namesApiDownUntil = Date.now() + 120000;
+        if (!out || out.some(x => !x)) return null;
+        return [].concat(...out);
+    }
+
+    // Ручной минимум без словаря: склоняем только одно слово, которое точно
+    // в именительном и точно мужское (на -й и на согласную). Всё остальное
+    // (-ия, -ья, -а, -я, -ы, -и, -ь) оставляем как написано: лучше недосклонить.
+    function rodMin(text) {
+        const t = String(text).trim();
+        if (!t || /\s/.test(t)) return t;
+        const low = t.toLowerCase().replace(/ё/g, 'е');
+        if (low === 'петр') return 'Петра';
+        if (low === 'лев') return 'Льва';
+        if (low === 'павел') return 'Павла';
+        if (low === 'любовь') return 'Любови';
+        const n = cap(t);
+        if (/й$/.test(n)) return n.slice(0, -1) + 'я';
+        if (/[бвгдзклмнпрстфхцчшщ]$/.test(n)) return n + 'а';
+        return n;
+    }
+
+    function chooseGender(btn, gender) {
+        const row = btn.closest('.name-row');
+        const ambig = JSON.parse(row.dataset.ambig);
+        const choice = gender === 'm' ? ambig.male : ambig.female;
+        const original = row.dataset.original;
+        const prefix = row.dataset.prefix || '';
+        const suffix = row.dataset.suffix || '';
+        row.dataset.canonical = choice.canonical;
+        row.dataset.gen = choice.gen;
+        row.dataset.ambigResolved = '1';
+        row.className = 'name-row ok';
+        const fullGen = prefix + choice.gen + suffix;
+        row.innerHTML = `
+            <span class="status" style="font-size:24px;color:#1A5C1A">✓</span>
+            <span class="name-text">
+                <span style="color:#999;text-decoration:line-through">${esc(original)}</span> → <b style="color:#1A5C1A;font-size:22px">${esc(fullGen)}</b>
+                <span class="name-note" style="color:#666;font-size:15px">Церковное имя: ${esc(prefix + choice.canonical)}</span>
+            </span>`;
+        const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+            .every(r => r.className.includes('ok'));
+        document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
+    }
+
+    function skipName(btn) {
+        const row = btn.closest('.name-row');
+        const original = row.dataset.original;
+        row.dataset.canonical = '__SKIP__';
+        row.className = 'name-row ok';
+        row.innerHTML = `
+            <span class="status" style="font-size:22px">!</span>
+            <span class="name-text" style="flex:1">
+                <b style="color:#8B5A00;font-size:20px">${esc(original)}</b>
+                <span class="name-note" style="color:#8B5A00">Включено как есть (имя не в святцах)</span>
+                <div style="margin-top:8px">
+                    <button onclick="deleteName(this)"
+                        style="padding:8px 18px;background:#fff0f0;border:2px solid #cc4444;border-radius:10px;font-size:14px;cursor:pointer;color:#cc4444;font-family:Georgia,serif">
+                        🗑 Удалить
+                    </button>
+                </div>
+            </span>`;
+        const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+            .every(r => r.className.includes('ok'));
+        document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
+    }
+
+    // ─── Обработка имён ────────────────────────────────────────────────────
+    async function processNames() {
+        const input = document.getElementById('namesInput').value;
+        const names = input.split('\n').map(n => n.trim().replace(/[.,;:!?—–]+$/, '').trim()).filter(n => n);
+        if (!names.length) { alert('Пожалуйста, введите хотя бы одно имя'); return; }
+
+        const fromScreen = (document.querySelector('.screen.active') || {}).id;
+        const btn = document.querySelector('#screen-names .btn-primary');
+        const btnText = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Проверяем имена…'; }
+        let answers = null;
+        try { answers = await askNames(names); } catch (e) { answers = null; }
+        if (btn) { btn.disabled = false; btn.textContent = btnText; }
+        // человек успел нажать «Назад»: не выдёргиваем его обратно
+        if ((document.querySelector('.screen.active') || {}).id !== fromScreen) return;
+
+        const result = document.getElementById('namesResult');
+        result.innerHTML = '';
+        let hasUnknown = false;
+
+        if (!answers) {
+            // Простой режим: сервер не ответил. Имена принимаются как написаны.
+            const note = document.createElement('div');
+            note.style.cssText = 'background:#FFF8DC;border:2px solid #C8A04A;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:16px;color:#6B4A00;line-height:1.4';
+            note.textContent = 'Сверка имён со святцами сейчас недоступна, имена приняты так, как вы их написали. Пожалуйста, проверьте, что они стоят в родительном падеже (кого? Анны, Николая, Марии): в таком виде записка и уйдёт.';
+            result.appendChild(note);
+            names.forEach(rawName => {
+                const gen = rodMin(rawName);
+                const row = document.createElement('div');
+                row.dataset.original = rawName;
+                row.dataset.prefix = '';
+                row.dataset.suffix = '';
+                row.dataset.canonical = '__MANUAL__';
+                row.dataset.gen = gen;
+                row.className = 'name-row ok';
+                row.innerHTML = `
+                    <span class="status" style="font-size:24px;color:#1A5C1A">✓</span>
+                    <span class="name-text">
+                        ${gen !== rawName
+                            ? `<span style="color:#999;text-decoration:line-through">${esc(rawName)}</span> → <b style="color:#1A5C1A;font-size:22px">${esc(gen)}</b>`
+                            : `<b style="color:#1A5C1A;font-size:22px">${esc(gen)}</b>`}
+                        <span class="name-note" style="color:#666;font-size:15px">Принято как написано</span>
+                    </span>`;
+                result.appendChild(row);
+            });
+            const banner = document.getElementById('warnBanner');
+            banner.style.display = 'none';
+            banner.textContent = '';
+            goTo('screen-check-names');
+            return;
+        }
+
+        names.forEach((rawName, i) => {
+            const r = answers[i] || {};
+            const prefix = r.chin ? r.chin + ' ' : '';
+            const chadaSuffix = r.hvost || '';
+            const variants = Array.isArray(r.varianty) ? r.varianty : [];
+            const vm = variants.find(v => v && v.pol === 'м' && v.kanon && v.roditelnyy);
+            const vf = variants.find(v => v && v.pol === 'ж' && v.kanon && v.roditelnyy);
+            const isAmbig = !!(vm && vf);
+            const row = document.createElement('div');
+            row.dataset.original = rawName;
+            row.dataset.prefix = prefix;
+            row.dataset.suffix = chadaSuffix;
+
+            if (isAmbig) {
+                // Неоднозначное имя: показываем выбор пола
+                const m = vm, f = vf;
+                const ambig = { male: { canonical: m.kanon, gen: m.roditelnyy }, female: { canonical: f.kanon, gen: f.roditelnyy } };
+                hasUnknown = true;
+                row.className = 'name-row warn';
+                row.dataset.canonical = '';
+                row.dataset.ambig = JSON.stringify(ambig);
+                row.innerHTML = `
+                    <span class="name-text" style="flex:1">
+                        <b style="color:#8B5A00;font-size:20px">«${esc(rawName)}»</b> — мужское или женское?
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+                            <button onclick="chooseGender(this,'m')"
+                                style="padding:14px 8px;background:#E8F0FF;border:2px solid #4A6ABB;border-radius:10px;font-size:17px;cursor:pointer;font-family:Georgia,serif;color:#1A2A6C">
+                                ♂ ${esc(prefix + ambig.male.canonical + chadaSuffix)}<br>
+                                <span style="font-size:13px;opacity:0.75">(род. ${esc(ambig.male.gen)})</span>
+                            </button>
+                            <button onclick="chooseGender(this,'f')"
+                                style="padding:14px 8px;background:#FFE8F5;border:2px solid #BB4A8B;border-radius:10px;font-size:17px;cursor:pointer;font-family:Georgia,serif;color:#6C1A4A">
+                                ♀ ${esc(prefix + ambig.female.canonical + chadaSuffix)}<br>
+                                <span style="font-size:13px;opacity:0.75">(род. ${esc(ambig.female.gen)})</span>
+                            </button>
+                        </div>
+                    </span>`;
+            } else if (r.kanon && r.roditelnyy) {
+                const fullGen = prefix + r.roditelnyy + chadaSuffix;
+                row.className = 'name-row ok';
+                row.dataset.canonical = r.kanon;
+                row.dataset.gen = r.roditelnyy;
+                row.innerHTML = `
+                    <span class="status" style="font-size:24px;color:#1A5C1A">✓</span>
+                    <span class="name-text">
+                        ${fullGen !== rawName
+                            ? `<span style="color:#999;text-decoration:line-through">${esc(rawName)}</span> → <b style="color:#1A5C1A;font-size:22px">${esc(fullGen)}</b>`
+                            : `<b style="color:#1A5C1A;font-size:22px">${esc(fullGen)}</b>`}
+                        <span class="name-note" style="color:#666;font-size:15px">Церковное имя: ${esc(prefix + r.kanon)}</span>
+                    </span>`;
+            } else {
+                // нет имени в святцах (в том числе при чине или приставке) или чин без имени
+                const noName = !!r.chin && !/\s/.test(rawName.trim());
+                hasUnknown = true;
+                row.className = 'name-row warn';
+                row.dataset.canonical = '';
+                row.innerHTML = `
+                    <span class="status" style="font-size:22px">⚠️</span>
+                    <span class="name-text" style="flex:1">
+                        <b style="color:#8B1A1A">«${esc(rawName)}»</b>
+                        <span class="name-note" style="color:#8B1A1A;font-weight:bold">${noName ? 'Чин указан, но имя не введено' : 'Нет в православных святцах'}</span>
+                        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+                            <input type="text" class="fix-input" placeholder="Введите православное имя"
+                                style="flex:1;min-width:120px;padding:12px;font-size:18px;border:2px solid #C8A04A;border-radius:10px;font-family:Georgia,serif;outline:none"
+                                oninput="checkFixInput(this)"
+                                onblur="applyFix(this)"
+                                onkeydown="if(event.key==='Enter'){this.blur()}"
+                            >
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            ${noName ? '' : `<button onclick="skipName(this)"
+                                style="flex:1;padding:12px 8px;background:#FFF8DC;border:2px solid #C8A04A;border-radius:10px;font-size:15px;cursor:pointer;color:#8B5A00;font-family:Georgia,serif;font-weight:bold">
+                                ! Пропустить имя как есть
+                            </button>`}
+                            <button onclick="deleteName(this)"
+                                style="flex:1;padding:12px 8px;background:#fff0f0;border:2px solid #cc4444;border-radius:10px;font-size:15px;cursor:pointer;color:#cc4444;font-family:Georgia,serif">
+                                🗑 Удалить
+                            </button>
+                        </div>
+                        <span class="name-note fix-hint" style="color:#1A5C1A;display:none"></span>
+                    </span>`;
+            }
+            result.appendChild(row);
+        });
+
+        const banner = document.getElementById('warnBanner');
+        banner.style.display = hasUnknown ? 'block' : 'none';
+        banner.textContent = hasUnknown ? '⚠ Исправьте или удалите имена, выделенные красным.' : '';
+
+        goTo('screen-check-names');
+    }
+
+    function checkFixInput(input) {
+        const row = input.closest('.name-row');
+        const val = input.value.trim();
+        const hint = row.querySelector('.fix-hint');
+        if (!val) {
+            row.dataset.canonical = '';
+            row.dataset.gen = '';
+            input.style.borderColor = '#C8A04A';
+            if (hint) hint.style.display = 'none';
+            return;
+        }
+        row.dataset.canonical = cap(val);
+        row.dataset.gen = rodMin(val);
+        input.style.borderColor = '#4A8B4A';
+        if (hint) {
+            hint.textContent = '✓ В записке: ' + row.dataset.gen;
+            hint.style.display = 'block';
+        }
+    }
+
+    let pendingFixes = []; // проверки исправленных имён, ещё не завершённые
+    function applyFix(input) {
+        const p = new Promise(done => setTimeout(async () => { try { await applyFixNow(input); } finally { done(); } }, 120));
+        pendingFixes.push(p);
+        p.then(() => { pendingFixes = pendingFixes.filter(x => x !== p); });
+    }
+
+    async function applyFixNow(input) {
+        {
+            const row = input.closest('.name-row');
+            if (!row || !row.parentNode) return;
+            if (!row.className.includes('warn')) return;
+            const val = input.value.trim();
+            if (!val) return;
+            let canonical = cap(val), gen = rodMin(val), found = false;
+            try {
+                const a = await askNames([val]);
+                const r = a && a[0];
+                if (r && r.kanon && r.roditelnyy && !(r.varianty && r.varianty.length)) { canonical = r.kanon; gen = r.roditelnyy; found = true; }
+            } catch (e) {}
+            if (!row.parentNode || !row.className.includes('warn')) return;
+            row.dataset.canonical = canonical;
+            row.dataset.gen = gen;
+            const rawName = row.dataset.original || val;
+            row.className = 'name-row ok';
+            row.innerHTML = found
+                ? `<span class="status" style="font-size:22px">✓</span>
+                   <span class="name-text">
+                       <span class="name-main"><span style="color:#999;text-decoration:line-through">${esc(rawName)}</span> → <b style="color:#1A5C1A;font-size:22px">${esc((row.dataset.prefix || "") + gen + (row.dataset.suffix || ""))}</b></span>
+                       <span class="name-note" style="color:#666;font-size:15px">Церковное имя: ${esc(canonical)}</span>
+                   </span>`
+                : `<span class="status" style="font-size:22px">✓</span>
+                   <span class="name-text">
+                       <span class="name-main"><span style="color:#999;text-decoration:line-through">${esc(rawName)}</span> → <b style="color:#8B5A00;font-size:22px">${esc((row.dataset.prefix || "") + gen + (row.dataset.suffix || ""))}</b></span>
+                       <span class="name-note" style="color:#8B5A00;font-size:15px">Введено вручную</span>
+                   </span>`;
+            const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+                .every(r => r.className.includes('ok'));
+            document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
+        }
+    }
+
+    function deleteName(btn) {
+        const row = btn.closest('.name-row');
+        row.remove();
+        const allOk = [...document.querySelectorAll('#namesResult .name-row')]
+            .every(r => r.className.includes('ok'));
+        document.getElementById('warnBanner').style.display = allOk ? 'none' : 'block';
+    }
+
+    async function confirmNames() {
+        if (pendingFixes.length) await Promise.all(pendingFixes);
+        const rows = document.querySelectorAll('#namesResult .name-row');
+        finalNames = [];
+        let hasUnsolved = false;
+
+        rows.forEach(row => {
+            const canonical = row.dataset.canonical;
+            const prefix = row.dataset.prefix || '';
+            const suffix = row.dataset.suffix || '';
+            if (canonical === '__SKIP__') {
+                finalNames.push(row.dataset.original); // как есть
+            } else if (canonical) {
+                finalNames.push(prefix + (row.dataset.gen || rodMin(canonical)) + suffix);
+            } else {
+                hasUnsolved = true;
+            }
+        });
+
+        if (hasUnsolved) {
+            alert('Исправьте или удалите имена, выделенные красным.');
+            return;
+        }
+        if (!finalNames.length) {
+            alert('Не осталось ни одного имени. Добавьте хотя бы одно.');
+            return;
+        }
+
+        const typeLabel = TYPE_LABELS[currentType] || currentType;
+        const namesStr = finalNames.join(', ');
+        document.getElementById('previewType').textContent = typeLabel;
+        document.getElementById('previewNames').textContent = namesStr;
+        document.getElementById('successType').textContent = typeLabel;
+        document.getElementById('successNames').textContent = namesStr;
+        goTo('screen-confirm');
+    }
+
+    function submitNoteOnly() {
+        submitToBot(currentType, finalNames);
+        renderQuickTypes();
+        goTo('screen-success');
+    }
+
+    function submitNote() {
+        submitToBot(currentType, finalNames);
+        goTo('screen-donate');
+    }
+
+    function submitToBot(type, names) {
+        fetch('https://pravoslav.store/zapiski-api/zapiski', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, names })
+        }).catch(() => {});
+    }
+
+    function donateDemo() {
+        const amount = parseInt(document.getElementById('donateAmount').value) || 0;
+        if (amount < 1) { alert('Пожалуйста, введите сумму пожертвования'); return; }
+        goTo('screen-donate-success');
+    }
+
+    // Слайдер фото
+    let slideIdx = 0;
+    const slides = document.querySelectorAll('.photo-area img');
+    const dots   = document.querySelectorAll('.slide-dot');
+    function goSlide(n) {
+        slides[slideIdx].classList.remove('active');
+        dots[slideIdx].classList.remove('active');
+        slideIdx = (n + slides.length) % slides.length;
+        slides[slideIdx].classList.add('active');
+        dots[slideIdx].classList.add('active');
+    }
+    setInterval(() => goSlide(slideIdx + 1), 4000);
+
+    function toggleAdmin() {
+        const panel = document.getElementById('admin-panel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function clearNotes() {
+        if (!confirm('Вы уверены? Все записки будут удалены после службы.')) return;
+        try {
+            const resp = await fetch('https://pravoslav.store/zapiski-api/clear', { method: 'POST' });
+            if (resp.ok) {
+                alert('✅ Записки очищены.');
+                document.getElementById('admin-panel').style.display = 'none';
+            } else { alert('Ошибка очистки.'); }
+        } catch(e) { alert('Ошибка соединения.'); }
+    }
+    // ─── Православный календарь + открытки ────────────────────────────────
+
+    // Расчёт православной Пасхи (юлианский алгоритм → григорианская дата)
+    function orthodoxEaster(year) {
+        const a = year % 4, b = year % 7, c = year % 19;
+        const d = (19 * c + 15) % 30;
+        const e = (2 * a + 4 * b - d + 34) % 7;
+        const mo = Math.floor((d + e + 114) / 31) - 1;
+        const dy = ((d + e + 114) % 31) + 1;
+        return new Date(year, mo, dy + 13); // +13 дней юлианский→григорианский
+    }
+
+    function getFeastList(year) {
+        const e = orthodoxEaster(year);
+        const add = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        const D = (m, d) => new Date(year, m - 1, d);
+        // showBefore: за сколько дней до праздника показывать открытки
+        // showAfter:  сколько дней ПОСЛЕ праздника ещё показывать (0 = только в день)
+        return [
+            { key:'rozhdestvo',    name:'Рождество Христово',              emoji:'⭐', date:D(1,7),        showBefore:7 },
+            { key:'kreshenie',     name:'Крещение Господне',               emoji:'💧', date:D(1,19),       showBefore:7 },
+            { key:'sretenie',      name:'Сретение Господне',               emoji:'🕯', date:D(2,15),       showBefore:7 },
+            { key:'blagoveshenie', name:'Благовещение',                    emoji:'🕊', date:D(4,7),        showBefore:7 },
+            { key:'palms',         name:'Вход Господень в Иерусалим',      emoji:'🌿', date:add(e,-7),     showBefore:7 },
+            { key:'pasha',         name:'Светлое Христово Воскресение',    emoji:'🌅', date:e,             showBefore:7 },
+            { key:'radonitsa',     name:'Радоница',                        emoji:'🕯', date:add(e,9),      showBefore:2 },
+            { key:'voznesenie',    name:'Вознесение Господне',             emoji:'✦', date:add(e,39),     showBefore:7 },
+            { key:'troitsa-rod',   name:'Троицкая родительская суббота',   emoji:'🌿', date:add(e,48),     showBefore:2 },
+            { key:'troitsa',       name:'Святая Троица',                   emoji:'🌿', date:add(e,49),     showBefore:7 },
+            { key:'den-detey',     name:'С Днём детей!',                   emoji:'🌸', date:D(6,1),        showBefore:7 },
+            // День России показываем за 2 дня до праздника, чтобы открытки были первыми 10-12 июня.
+            { key:'pravoslavnoe-rossiya', name:'Православная Россия',      emoji:'🇷🇺', date:D(6,12),       showBefore:2 },
+            { key:'ioanna',        name:'Рождество Иоанна Предтечи',       emoji:'✝️', date:D(7,7),        showBefore:7 },
+            { key:'petra-pavla',   name:'Апостолов Петра и Павла',         emoji:'⚓', date:D(7,12),       showBefore:7 },
+            { key:'preobrazhenie', name:'Преображение Господне',           emoji:'✨', date:D(8,19),       showBefore:7 },
+            { key:'uspenie',       name:'Успение Богородицы',              emoji:'🌸', date:D(8,28),       showBefore:7 },
+            { key:'rozhd-bog',     name:'Рождество Богородицы',            emoji:'🌸', date:D(9,21),       showBefore:7 },
+            { key:'vozdvizhenie',  name:'Воздвижение Честного Креста',     emoji:'✞', date:D(9,27),       showBefore:7 },
+            { key:'vvedenie',      name:'Введение во храм Богородицы',     emoji:'🕯', date:D(12,4),       showBefore:7 },
+        ];
+    }
+
+    // Возвращает праздники для показа: текущие активные или ближайший следующий
+    function getActiveFeastList() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const todayMs = today.getTime();
+        const DAY = 86400000;
+
+        const yr = today.getFullYear();
+        const all = [...getFeastList(yr), ...getFeastList(yr + 1)];
+
+        // Активные: от showBefore дней до праздника включительно в сам день
+        const active = all.filter(f => {
+            const fMs = f.date.getTime();
+            const windowStart = fMs - f.showBefore * DAY;
+            return todayMs >= windowStart && todayMs <= fMs;
+        }).sort((a, b) => a.date - b.date);
+
+        if (active.length) return active;
+
+        // Нет текущего праздника — показать ближайший предстоящий
+        const next = all
+            .filter(f => f.date.getTime() > todayMs)
+            .sort((a, b) => a.date - b.date)[0];
+
+        return next ? [{ ...next, isNext: true }] : [];
+    }
+
+    let currentCardUrl = '';
+    let activeFeasts = [];
+
+    async function loadCards() {
+        activeFeasts = getActiveFeastList();
+        if (!activeFeasts.length) {
+            document.getElementById('cards-section').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('cards-section').style.display = 'block';
+
+        // Загружаем манифест
+        let manifest = {};
+        try {
+            const resp = await fetch('https://khram-aikhal.github.io/cards/index.json?v=' + Date.now());
+            if (resp.ok) manifest = await resp.json();
+        } catch {}
+
+        // Отрисовываем каждый активный праздник
+        const container = document.getElementById('cards-feasts-container');
+        container.innerHTML = '';
+
+        activeFeasts.forEach(feast => {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const DAY = 86400000;
+            const diff = Math.round((feast.date.getTime() - today.getTime()) / DAY);
+
+            const dateStr = feast.date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+            let dateLabel;
+            if (feast.isNext)    dateLabel = dateStr + ' — впереди 🗓';
+            else if (diff === 0) dateLabel = dateStr + ' — сегодня! 🎉';
+            else if (diff === 1) dateLabel = dateStr + ' — завтра';
+            else if (diff <= 7)  dateLabel = dateStr + ' — через ' + diff + ' ' + daysWord(diff);
+            else                 dateLabel = dateStr;
+
+            const cards = manifest[feast.key] || [];
+
+            const block = document.createElement('div');
+            block.className = 'feast-block';
+            block.innerHTML = `
+                <div class="cards-header">
+                    <div>
+                        <div class="cards-feast">${feast.emoji} ${feast.name}</div>
+                        <div class="cards-date">${dateLabel}</div>
+                    </div>
+                    <div class="cards-count" id="count-${feast.key}"></div>
+                </div>
+                <div class="cards-scroll" id="scroll-${feast.key}"></div>
+                <div class="cards-swipe-hint" id="hint-${feast.key}" style="display:none">← листай, здесь больше открыток →</div>
+                <div class="cards-empty" id="empty-${feast.key}" style="display:none">
+                    <div style="font-size:32px;margin-bottom:8px">🎨</div>
+                    <div style="font-size:14px;color:#8B6A3A;line-height:1.5">Открытки скоро появятся</div>
+                </div>
+            `;
+            container.appendChild(block);
+
+            renderCards(cards, feast.key);
+        });
+    }
+
+    function renderCards(cards, feastKey) {
+        const scroll = document.getElementById('scroll-' + feastKey);
+        const empty  = document.getElementById('empty-' + feastKey);
+        const count  = document.getElementById('count-' + feastKey);
+        if (!scroll) return;
+
+        if (!cards.length) {
+            empty.style.display = 'block';
+            return;
+        }
+
+        const n = cards.length;
+        count.textContent = n + (n === 1 ? ' открытка' : n < 5 ? ' открытки' : ' открыток');
+        const hint = document.getElementById('hint-' + feastKey);
+        if (hint && n > 3) hint.style.display = 'block';
+
+        cards.forEach(fn => {
+            const signedFn = fn.replace(/\.(png|PNG)$/, '.jpg');
+            const url = 'https://khram-aikhal.github.io/cards/' + feastKey + '/signed/' + signedFn;
+            const div = document.createElement('div');
+            div.className = 'card-thumb';
+            div.innerHTML = '<img src="' + url + '" loading="lazy" alt="">'
+                + '<button class="card-save-btn" onclick="saveCardDirect(\'' + url + '\',event)">⬇ Сохранить</button>';
+            div.onclick = () => openLightbox(url);
+            scroll.appendChild(div);
+        });
+    }
+
+    function openLightbox(url) {
+        currentCardUrl = url;
+        document.getElementById('lb-img').src = url;
+        document.getElementById('lightbox').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+        document.getElementById('lb-img').src = '';
+        document.body.style.overflow = '';
+    }
+
+    async function saveCardDirect(url, event) {
+        event.stopPropagation();
+        // Считаем скачивание
+        const cardName = url.split('/cards/')[1] || url.split('/').pop();
+        fetch('https://pravoslav.store/zapiski-api/cards/track?card=' + encodeURIComponent(cardName), { method: 'POST' }).catch(() => {});
+        try {
+            const r = await fetch(url);
+            const blob = await r.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = url.split('/').pop() || 'card.jpg';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        } catch { window.open(url, '_blank'); }
+    }
+
+    async function downloadCard() {
+        try {
+            const r = await fetch(currentCardUrl);
+            const blob = await r.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = currentCardUrl.split('/').pop() || 'card.jpg';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        } catch { window.open(currentCardUrl, '_blank'); }
+    }
+
+    async function shareCard() {
+        if (navigator.share) {
+            try {
+                const r = await fetch(currentCardUrl);
+                const blob = await r.blob();
+                const file = new File([blob], 'card.jpg', { type: blob.type });
+                await navigator.share({ files: [file], title: 'Поздравление с праздником' });
+                return;
+            } catch {}
+        }
+        if (navigator.clipboard) {
+            await navigator.clipboard.writeText(currentCardUrl);
+            alert('Ссылка скопирована — можете отправить в мессенджере');
+        } else {
+            window.open(currentCardUrl, '_blank');
+        }
+    }
+
+    // ─── Сохранённые списки имён ─────────────────────────────────
+    const LISTS_KEY = 'khram_saved_lists';
+
+    function loadSavedLists() {
+        try { return JSON.parse(localStorage.getItem(LISTS_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveSavedLists(lists) {
+        localStorage.setItem(LISTS_KEY, JSON.stringify(lists));
+    }
+
+    function renderSavedLists() {
+        const lists = loadSavedLists();
+        const block = document.getElementById('saved-lists-block');
+        const container = document.getElementById('saved-lists-container');
+        if (!lists.length) { block.style.display = 'none'; return; }
+        block.style.display = 'block';
+        container.innerHTML = '';
+        lists.forEach((list, i) => {
+            const lines = list.names.split('\n').filter(Boolean);
+            const preview = lines.slice(0, 4).join(', ') + (lines.length > 4 ? ' и ещё ' + (lines.length - 4) + ' имён' : '');
+            const div = document.createElement('div');
+            div.className = 'saved-list-item';
+            div.innerHTML =
+                '<div style="flex:1">'
+                + '<div class="saved-list-name">' + list.name + '</div>'
+                + '<div class="saved-list-preview">' + preview + '</div>'
+                + '</div>'
+                + '<button class="saved-list-use" onclick="useList(' + i + ')">Использовать</button>'
+                + '<button class="saved-list-del" onclick="deleteList(' + i + ')" title="Удалить">✕</button>';
+            container.appendChild(div);
+        });
+    }
+
+    function useList(index) {
+        const lists = loadSavedLists();
+        if (lists[index]) document.getElementById('namesInput').value = lists[index].names;
+    }
+
+    function deleteList(index) {
+        const lists = loadSavedLists();
+        lists.splice(index, 1);
+        saveSavedLists(lists);
+        renderSavedLists();
+    }
+
+    function saveCurrentList() {
+        const nameInput = document.getElementById('save-list-name').value.trim();
+        if (!nameInput) { document.getElementById('save-list-name').focus(); return; }
+        const rawNames = document.getElementById('namesInput').value.trim();
+        if (!rawNames) { document.getElementById('namesInput').focus(); return; }
+        const lists = loadSavedLists();
+        const existing = lists.findIndex(l => l.name === nameInput);
+        if (existing >= 0) {
+            lists[existing].names = rawNames;
+        } else {
+            lists.push({ name: nameInput, names: rawNames });
+        }
+        saveSavedLists(lists);
+        renderSavedLists();
+        document.getElementById('save-list-done').style.display = 'block';
+    }
+
+    // Прямые ссылки по хэшу: #panikhida, #zdravie, #upokoj и т.д.
+    const HASH_TYPES = ['zdravie','upokoj','bolash','putesh','panikhida','molebn'];
+    const hashType = window.location.hash.replace('#', '');
+    if (HASH_TYPES.includes(hashType)) {
+        selectType(hashType);
+    }
+
+    // ─── Автообъявления на двунадесятые и великие праздники ─────
+    function showFeastAnnouncement() {
+        const block = document.getElementById('announce-block');
+        if (!block) return;
+        const today = new Date(); today.setHours(0,0,0,0);
+        const year = today.getFullYear();
+        const e = orthodoxEaster(year);
+        const add = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        const D = (m, d) => new Date(year, m - 1, d);
+
+        // [name, emoji, color, date, showBefore, showAfter, eveLines[], dayLines[]]
+        // showBefore: двунадесятые = 7, остальные = 3; showAfter = 0 (исчезает после праздника)
+        const FEASTS = [
+            ['Рождество Христово ·\nПрестольный праздник', '⭐', '#1A237E',
+                D(1,7), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Богослужение вечером в 16:00']],
+            ['Богоявление Господне\n(Крещение)', '💧', '#1565C0',
+                D(1,19), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Великое освящение воды']],
+            ['Сретение Господне', '🕯', '#8B1A1A',
+                D(2,15), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Благовещение\nПресвятой Богородицы', '🕊', '#1565C0',
+                D(4,7), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Вход Господень\nв Иерусалим', '🌿', '#2E6B2E',
+                add(e,-7), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Светлое Христово\nВоскресение — Пасха!', '🌅', '#8B1A1A',
+                e, 7, 0,
+                ['Пасхальная заутреня в полночь', 'Крестный ход · Литургия'],
+                ['Пасхальная Литургия', 'Вечерня в 16:00']],
+            ['Вознесение Господне', '✦', '#8B1A1A',
+                add(e,39), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Троицкая\nродительская суббота', '🕯', '#4A4A4A',
+                add(e,48), 3, 0,
+                [],
+                ['Заупокойная служба в 15:45', 'Всенощное бдение в 16:30']],
+            ['Святая Троица\n· Пятидесятница', '🌿', '#2E6B2E',
+                add(e,49), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Богослужение вечером в 16:00']],
+            ['Преображение Господне', '✨', '#6A4A00',
+                D(8,19), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00', 'Освящение плодов']],
+            ['Успение\nПресвятой Богородицы', '🌸', '#1565C0',
+                D(8,28), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Рождество\nПресвятой Богородицы', '🌸', '#1565C0',
+                D(9,21), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Воздвижение\nЧестного Животворящего Креста', '✞', '#8B1A1A',
+                D(9,27), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Покров\nПресвятой Богородицы', '🕊', '#1565C0',
+                D(10,14), 3, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            ['Введение во храм\nПресвятой Богородицы', '🕯', '#1565C0',
+                D(12,4), 7, 0,
+                ['Всенощное бдение сегодня в 16:30'],
+                ['Праздничная Литургия в 09:00']],
+            // ── Родительские субботы ──
+            ['Мясопустная\nродительская суббота', '🕯', '#4A4A4A',
+                add(e,-57), 3, 0,
+                ['Заупокойная служба завтра в 09:00'],
+                ['Заупокойная служба в 09:00', '🕯 Подать панихиду можно на сайте']],
+            ['Радоница', '🕯', '#4A4A4A',
+                add(e,9), 3, 0,
+                [],
+                ['Заупокойное богослужение в 09:00', '🕯 Подать панихиду можно на сайте']],
+            ['Дмитриевская\nродительская суббота', '🕯', '#4A4A4A',
+                (function(){ const d=new Date(year,10,8); d.setDate(d.getDate()-(d.getDay()||7)); return d; })(),
+                3, 0,
+                [],
+                ['Заупокойная служба в 09:00', '🕯 Подать панихиду можно на сайте']],
+        ];
+
+        function hexDarken(hex) {
+            return '#' + hex.slice(1).match(/.{2}/g)
+                .map(c => Math.max(0, parseInt(c,16) - 35).toString(16).padStart(2,'0')).join('');
+        }
+
+        function daysWord(n) {
+            if (n === 1) return 'день';
+            if (n >= 2 && n <= 4) return 'дня';
+            return 'дней';
+        }
+
+        for (const [name, emoji, color, date, showBefore, showAfter, eveLines, dayLines] of FEASTS) {
+            const diff = Math.round((date - today) / 86400000);
+            if (diff < -showAfter || diff > showBefore) continue;
+
+            let title, lines;
+            if (diff > 2) {
+                title = `Через ${diff} ${daysWord(diff)} — ${name}`;
+                lines = [];
+            } else if (diff === 2) {
+                title = `Послезавтра — ${name}`;
+                lines = eveLines.map(l => l.replace('сегодня', 'завтра'));
+            } else if (diff === 1) {
+                title = `Завтра — ${name}`;
+                lines = eveLines;
+            } else if (diff === 0) {
+                title = `Сегодня — ${name}!`;
+                lines = dayLines;
+            } else {
+                title = name; lines = [];
+            }
+
+            block.style.background = `linear-gradient(135deg,${color},${hexDarken(color)})`;
+            block.innerHTML =
+                `<div style="font-size:11px;opacity:.7;letter-spacing:1.5px;margin-bottom:6px;text-transform:uppercase">Богослужение</div>`
+                + `<div style="font-size:15px;font-family:Georgia,serif;font-weight:bold;line-height:1.45;white-space:pre-line">${emoji} ${title}</div>`
+                + lines.map(l => `<div style="font-size:13px;margin-top:5px;opacity:.93">${l}</div>`).join('');
+            block.style.display = 'block';
+            return;
+        }
+        block.style.display = 'none';
+    }
+
+    showFeastAnnouncement();
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    loadCards().then(() => {
+        if (window.location.hash === '#cards') {
+            const el = document.getElementById('cards');
+            if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+    });
+
+</script>
+</body>
+</html>

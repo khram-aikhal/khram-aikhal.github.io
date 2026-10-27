@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Памятка: озеленение могилки на песчаной почве</title>
+<style>
+  :root{
+    --green:#3f5e3a; --green-soft:#6b8e5a; --sand:#e9e0cf;
+    --cream:#f7f3e9; --terra:#b96a4a; --ink:#2e2b26; --line:#d8cdb6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--cream);color:var(--ink);
+    line-height:1.6;padding:18px;
+  }
+  .card{max-width:640px;margin:0 auto}
+  header{text-align:center;padding:22px 16px 18px;border-bottom:2px solid var(--line)}
+  header .leaf{font-size:34px}
+  h1{font-size:1.55rem;color:var(--green);margin:6px 0 4px;letter-spacing:.3px}
+  header p{font-size:.95rem;color:var(--green-soft);font-style:italic}
+  section{margin-top:26px}
+  h2{font-size:1.15rem;color:var(--terra);border-left:4px solid var(--terra);
+     padding-left:10px;margin-bottom:12px}
+
+  /* Схема */
+  .plot{background:var(--sand);border:2px solid var(--line);border-radius:14px;
+        padding:14px;display:flex;flex-direction:column;gap:10px}
+  .zone{background:#fff;border:1px dashed var(--green-soft);border-radius:10px;
+        padding:12px 14px}
+  .zone .tag{display:inline-block;font-size:.72rem;letter-spacing:.5px;
+       text-transform:uppercase;color:#fff;background:var(--green-soft);
+       border-radius:20px;padding:2px 10px;margin-bottom:5px}
+  .zone.head{background:#eef3e6;border-style:solid;border-color:var(--green);text-align:center}
+  .zone b{color:var(--green)}
+  .arrow-note{font-size:.82rem;color:#7a7264;font-style:italic;margin-top:4px}
+
+  /* Календарь */
+  table{width:100%;border-collapse:collapse;font-size:.92rem;
+        background:#fff;border-radius:10px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:var(--green);color:var(--cream);font-weight:normal;letter-spacing:.3px}
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:bold;color:var(--green);white-space:nowrap}
+
+  /* Список */
+  ul.buy{list-style:none;background:#fff;border-radius:10px;padding:6px 4px}
+  ul.buy li{padding:9px 14px;border-bottom:1px solid var(--line);position:relative;padding-left:34px}
+  ul.buy li:last-child{border-bottom:none}
+  ul.buy li::before{content:"🌱";position:absolute;left:12px}
+  ul.tips{list-style:none;padding-left:2px}
+  ul.tips li{padding:6px 0 6px 26px;position:relative}
+  ul.tips li::before{content:"💧";position:absolute;left:0}
+  ul.tips li.sun::before{content:"☀️"}
+  ul.tips li.spade::before{content:"🪴"}
+  ul.tips li.calendar::before{content:"🗓️"}
+
+  footer{margin-top:30px;text-align:center;font-size:.82rem;color:#8a8272;
+         border-top:2px solid var(--line);padding-top:16px;font-style:italic}
+  .accent{color:var(--terra)}
+  @media print{body{background:#fff}.plot,table,ul.buy{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <header>
+    <div class="leaf">🌿</div>
+    <h1>Зелёная могилка на песчаной почве</h1>
+    <p>Растения, что любят солнце и засуху — и почти не просят полива</p>
+  </header>
+
+  <section>
+    <h2>Схема посадки</h2>
+    <div class="plot">
+      <div class="zone head">
+        <span class="tag">изголовье</span><br>
+        ✝ <b>Крест / памятник</b><br>
+        🌲 <b>Можжевельник стелющийся</b> или <b>барвинок</b> по бокам
+        <div class="arrow-note">вечнозелёный «каркас» — зелень и зимой</div>
+      </div>
+      <div class="zone">
+        <span class="tag">центр — холмик</span><br>
+        Сплошной ковёр: <b>очиток (седум)</b> + <b>молодило</b>
+        <div class="arrow-note">основа: сочные, живут в песке почти без воды</div>
+      </div>
+      <div class="zone">
+        <span class="tag">пятна цвета</span><br>
+        🌸 <b>Флокс шиловидный</b> (весенний ковёр) · ☀️ <b>портулак</b> полоской (летом)
+      </div>
+      <div class="zone">
+        <span class="tag">по углам · по краю</span><br>
+        ✨ <b>Ясколка</b> (серебро) по углам · <b>чабрец</b> душистой каймой по периметру
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Цветёт по очереди — с весны до осени</h2>
+    <table>
+      <tr><th>Когда</th><th>Что цветёт</th></tr>
+      <tr><td>Апрель–май</td><td>флокс шиловидный (ковёр цветов), барвинок (голубые)</td></tr>
+      <tr><td>Май–июнь</td><td>ясколка (белым), молодило, гвоздика-травянка</td></tr>
+      <tr><td>Июнь–июль</td><td>чабрец (сиреневый), очиток едкий (жёлтый)</td></tr>
+      <tr><td>Июль–сентябрь</td><td>портулак (яркий), очиток видный (розовеет к осени)</td></tr>
+      <tr><td>Круглый год</td><td>зелень: можжевельник, барвинок, молодило, очиток</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Что купить</h2>
+    <ul class="buy">
+      <li>Очиток (2–3 вида) + молодило — <b>основа-ковёр</b></li>
+      <li>Барвинок <b>или</b> можжевельник стелющийся — 1–3 шт у креста</li>
+      <li>Флокс шиловидный — 1–2 куртинки</li>
+      <li>Ясколка — по углам</li>
+      <li>Чабрец — на бордюр</li>
+      <li>Портулак — пакетик семян (по желанию)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Хитрости для песка</h2>
+    <ul class="tips">
+      <li class="spade">В лунку — горсть компоста и немного земли, чтобы саженец прижился.</li>
+      <li>Сверху замульчируй (кора, галька, камушки) — влага держится дольше.</li>
+      <li class="sun">Поливай как следует только первые 2–3 недели, дальше — сами.</li>
+      <li class="calendar">Сажать весной или в конце лета, не в жару полудня.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Если место в тени 🌳</h2>
+    <div class="plot" style="background:#e7ecdf">
+      <div class="zone">
+        <span class="tag" style="background:var(--green)">замена ковра</span><br>
+        Вместо очитка и молодила (им нужно солнце) —
+        <b>барвинок</b> + <b>пахизандра верхушечная</b> + <b>живучка (аюга)</b>
+        <div class="arrow-note">вечнозелёный ковёр, любит тень, воду просит мало</div>
+      </div>
+      <div class="zone">
+        <span class="tag" style="background:var(--green)">цвет весной</span><br>
+        🌿 <b>Ландыши</b> (душистые, разрастаются ковром) · <b>аюга</b> (синие свечки)
+      </div>
+      <div class="zone">
+        <span class="tag" style="background:var(--green)">остаются те же</span><br>
+        Барвинок отлично живёт и в тени, и на солнце — он подходит везде.
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:#7a7264;font-style:italic;margin-top:8px">
+      Сухая тень — самое сложное место в саду, но эти растения справляются.
+      На солнце их не сажают: барвинок и аюга там выгорают.</p>
+  </section>
+
+  <footer>
+    Всё это — неприхотливые, недорогие растения.<br>
+    Очиток и молодило легко берутся отросточками и приживаются даже брошенными на землю.<br>
+    <span class="accent">С заботой 🤍</span>
+  </footer>
+
+</div>
+</body>
+</html>

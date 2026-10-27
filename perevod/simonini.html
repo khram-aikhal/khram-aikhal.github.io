@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Настройка зажигания Simonini Mini 2 Plus — перевод ролика</title>
+<style>
+  :root{--ink:#20242a;--paper:#f4f6f8;--card:#ffffff;--line:#dfe3e8;
+        --accent:#c0432f;--accent2:#2c6e8f;--muted:#6b7480;--num:#eef4f8}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,Segoe UI,Roboto,Georgia,serif;background:var(--paper);
+       color:var(--ink);line-height:1.6;padding:18px}
+  .wrap{max-width:640px;margin:0 auto}
+  header{text-align:center;padding:18px 10px 14px;border-bottom:2px solid var(--line)}
+  .tag{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--accent2)}
+  h1{font-size:1.4rem;margin:6px 0 4px}
+  header p{font-size:.9rem;color:var(--muted)}
+  header a{color:var(--accent2);font-size:.85rem}
+  .note{background:#fff8ec;border:1px solid #f0dcae;border-radius:10px;
+        padding:10px 13px;margin:18px 0;font-size:.9rem;color:#6a5a2e}
+  h2{font-size:1.12rem;color:var(--accent);margin:24px 0 10px;
+     border-left:4px solid var(--accent);padding-left:10px}
+  p.lead{font-size:1rem;margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+        padding:14px 16px;margin:12px 0;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+  .calc{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95rem;
+        background:var(--num);border-radius:8px;padding:10px 12px;margin:8px 0;
+        border:1px solid #d7e6ef}
+  .calc b{color:var(--accent2)}
+  ol.steps{margin:6px 0 6px 4px;padding-left:22px}
+  ol.steps li{margin:8px 0}
+  .key{background:#eaf5ee;border:1px solid #bfe0cb;border-radius:8px;
+       padding:3px 8px;font-weight:bold;color:#1f6b3d;white-space:nowrap}
+  .tip{background:#eef4f8;border-left:4px solid var(--accent2);border-radius:8px;
+       padding:10px 13px;margin:12px 0;font-size:.94rem}
+  footer{margin-top:26px;text-align:center;font-size:.82rem;color:var(--muted);
+         border-top:2px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag">Перевод с английского</div>
+    <h1>⚙️ Настройка зажигания Simonini Mini 2 Plus</h1>
+    <p>Как выставить опережение «на минимуме инструмента» — переводим миллиметры в градусы</p>
+    <p><a href="https://youtu.be/jpdJv3-Jr90">▶ Оригинал: «Two-stroke Timing Methods Using minimal Gear»</a></p>
+  </header>
+
+  <div class="note">
+    📝 <b>От переводчика:</b> в автосубтитрах местами слышится «40 мм», но во всех расчётах
+    автора фигурирует <b>14 мм</b> — привожу так, как сходятся цифры. Значения перевёл дословно,
+    смысл сохранил.
+  </div>
+
+  <p class="lead">Речь о настройке зажигания на небольшом двухтактном двигателе. У меня собраны
+  данные — факты и цифры. Вот обвод (чертёж) пластины статора и информация от самого
+  <b>Simonini</b>: производитель задаёт величину в миллиметрах — расстояние вот отсюда сюда.
+  Но я захотел перевести её в <b>градусы</b>, чтобы разметить маховик.</p>
+
+  <h2>1. Расчёт по пластине статора</h2>
+  <div class="card">
+    <p>Всё, что нужно, — знать диаметр пластины статора. Он равен <b>78 мм</b>.</p>
+    <div class="calc">
+      Длина окружности: <b>78 × 3,14 = 244 мм</b><br>
+      На один градус: <b>244 ÷ 360 = 0,68 мм/градус</b><br>
+      Значит спец-величина: <b>14 мм = 20,58°</b>
+    </div>
+    <p>Теперь у нас есть эта информация — и можно собирать всё обратно и приступать.</p>
+  </div>
+
+  <h2>2. Метка ВМТ (верхней мёртвой точки)</h2>
+  <div class="card">
+    <p>Первое, что нужно, — сделать метку ВМТ на маховике. Если спец-инструмента нет —
+    его легко сделать из старой свечи зажигания:</p>
+    <ol class="steps">
+      <li>Сточить (сгрызть) резьбовое кольцо/«юбку» у свечи снизу.</li>
+      <li>Когда сточили — взять небольшой <b>болт с гайкой</b>, продеть через свечу.</li>
+      <li>Накрутить гайку на конец — вот и готов твой инструмент для поиска ВМТ.</li>
+    </ol>
+  </div>
+
+  <h2>3. Расчёт по маховику</h2>
+  <div class="card">
+    <p>Дальше я измерил диаметр маховика — получилось <b>чуть меньше 104 мм</b>.
+    По тем же формулам, что и раньше:</p>
+    <div class="calc">
+      На один градус на маховике: <b>0,907 мм/градус</b><br>
+      Наша установка <b>20,58°</b> → <b>20,58 × 0,907 = 18,66 мм</b>
+    </div>
+    <p>То есть метку зажигания нужно поставить на <span class="key">18,66 мм от ВМТ</span>
+    по маховику.</p>
+  </div>
+
+  <div class="tip">
+    💡 <b>Быстрый лайфхак с изолентой.</b> Если возиться совсем неохота — изолента даёт
+    примерно <b>22°</b> на таких маленьких маховиках (наматываешь как ориентир-метку).
+  </div>
+
+  <h2>4. Как ещё проверить</h2>
+  <div class="card">
+    <p>Есть и другой быстрый способ проверить момент зажигания. В интернете есть отличная
+    статья на эту тему — очень стоит почитать. А в другом источнике, что мне попадался,
+    честно говоря, дают величину <b>7 мм</b> (вот отсюда сюда) — и это выходит вполне
+    <b>безопасная, умеренная</b> установка.</p>
+  </div>
+
+  <h2>5. Финал</h2>
+  <div class="card">
+    <p>Осталось только подключить <b>стробоскоп (timing light)</b> и проверить. Я ещё сделал
+    несколько <b>дополнительных меток на позднее зажигание (retard)</b> — потому что
+    «один размер подходит не всем», в чём я и убедился на практике.</p>
+  </div>
+
+  <footer>
+    Перевод и оформление сделаны для Алёны 🤍<br>
+    Технический ролик · Simonini Mini 2 Plus · настройка опережения зажигания
+  </footer>
+</div>
+</body>
+</html>
